@@ -147,6 +147,12 @@ def getElement(rdfModule, element, isFinal=False):
                 return {}
             else: print('The option <{}> is not available in presel analysis'.format(element))
 
+        elif element=='processLabels':
+            if isFinal:
+                print('The variable <{}> is optional in your analysis_final.py file return empty dictionary'.format(element))
+                return {}
+            else: print('The option <{}> is not available in presel analysis'.format(element))
+
         elif element=='geometryFile':
             print('The variable <{}> is optional in your analysys.py file, return default value empty string'.format(element))
             if isFinal: print('The option <{}> is not available in final analysis'.format(element))
@@ -765,6 +771,7 @@ def runFinal(rdfModule):
     cutList = getElement(rdfModule,"cutList", True)
     length_cuts_names = max([len(cut) for cut in cutList])
     cutLabels = getElement(rdfModule,"cutLabels", True)
+    processLabels = getElement(rdfModule,"processLabels", True)
 
     # save a table in a separate tex file
     saveTabular = getElement(rdfModule,"saveTabular", True)
@@ -851,9 +858,14 @@ def runFinal(rdfModule):
         tdf_list = []
         count_list = []
         cuts_list = []
-        cuts_list.append(pr)
         eff_list=[]
-        eff_list.append(pr)
+
+        if processLabels:
+            cuts_list.append(processLabels[pr])
+            eff_list.append(processLabels[pr])
+        else:
+            cuts_list.append(pr)
+            eff_list.append(pr)
 
         # Define all histos, snapshots, etc...
         print ('----> Defining snapshots and histograms')
