@@ -1,18 +1,54 @@
 #Input directory where the files produced at the stage1 level are
-inputDir  = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/HNLs/"
+inputDir = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/HNL_Majorana_eenu/spring2021/output_stage1/"
+#inputDir = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/HNL_Majorana_eenu/pre_winter2023_tests_v2/output_stage1/"
 #inputDir = "/eos/user/j/jalimena/FCCeeLLP/"
 #inputDir = "output_stage1/"
 
-#Input directory where the files produced at the final-selection level are
-outputDir  = "output_finalSel/"
+#Output directory where the files produced at the final-selection level are
+outputDir = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/HNL_Majorana_eenu/spring2021/output_finalSel/"
+#outputDir = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/HNL_Majorana_eenu/pre_winter2023_tests_v2/output_finalSel/"
+#outputDir  = "output_finalSel/"
+
+#Integrated luminosity for scaling number of events (required only if setting doScale to true)
+#intLumi = 150e6 #pb^-1
+
+#Scale event yields by intLumi and cross section (optional)
+#doScale = True
+
+#Save event yields in a table (optional)
+saveTabular = True
 
 processList = {
     #run over the full statistics from stage1
+
+    #backgrounds
     'p8_ee_Zee_ecm91':{},
     'p8_ee_Ztautau_ecm91':{},
     'p8_ee_Zbb_ecm91':{},
     'p8_ee_Zcc_ecm91':{},
     'p8_ee_Zuds_ecm91':{},
+
+    #signals
+    'eenu_30GeV_1p41e-6Ve':{},
+    'eenu_50GeV_1p41e-6Ve':{},
+    'eenu_70GeV_1p41e-6Ve':{},
+    'eenu_90GeV_1p41e-6Ve':{},
+}
+
+###Dictionary for prettier names of processes (optional)
+processLabels = {
+    #backgrounds
+    'p8_ee_Zee_ecm91':"Z $\rightarrow$ ee",
+    'p8_ee_Ztautau_ecm91':"Z $\rightarrow \tau \tau$",
+    'p8_ee_Zbb_ecm91':"Z $\rightarrow$ bb",
+    'p8_ee_Zcc_ecm91':"Z $\rightarrow$ cc",
+    'p8_ee_Zuds_ecm91':"Z $\rightarrow$ uds",
+
+    #signals
+    'eenu_30GeV_1p41e-6Ve': "$m_N =$ 30 GeV, $|V_{eN}| =  1.41 * 10^{-6}$",
+    'eenu_50GeV_1p41e-6Ve': "$m_N =$ 50 GeV, $|V_{eN}| =  1.41 * 10^{-6}$",
+    'eenu_70GeV_1p41e-6Ve': "$m_N =$ 70 GeV, $|V_{eN}| =  1.41 * 10^{-6}$",
+    'eenu_90GeV_1p41e-6Ve': "$m_N =$ 90 GeV, $|V_{eN}| =  1.41 * 10^{-6}$",
 }
 
 #Link to the dictonary that contains all the cross section information etc...
@@ -21,6 +57,10 @@ procDict = "FCCee_procDict_spring2021_IDEA.json"
 #Add MySample_p8_ee_ZH_ecm240 as it is not an offical process
 procDictAdd={
     #"MySample_p8_ee_ZH_ecm240":{"numberOfEvents": 10000000, "sumOfWeights": 10000000, "crossSection": 0.201868, "kfactor": 1.0, "matchingEfficiency": 1.0}
+    "eenu_30GeV_1p41e-6Ve": {"numberOfEvents": 50000, "sumOfWeights": 50000, "crossSection": 6.638e-10, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    "eenu_50GeV_1p41e-6Ve": {"numberOfEvents": 50000, "sumOfWeights": 50000, "crossSection": 4.535e-10, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    "eenu_70GeV_1p41e-6Ve": {"numberOfEvents": 50000, "sumOfWeights": 50000, "crossSection": 1.968e-10, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    "eenu_90GeV_1p41e-6Ve": {"numberOfEvents": 50000, "sumOfWeights": 50000, "crossSection": 1.749e-12, "kfactor": 1.0, "matchingEfficiency": 1.0},
 }
 
 #Number of CPUs to use
@@ -44,6 +84,15 @@ cutList = {
     # "sel2RecoEle_vetoes_absD0Gt0p5": "n_RecoElectrons==2 && n_RecoMuons==0 && n_RecoPhotons==0 && n_RecoJets==0 && n_RecoPhotons==0 && RecoElectronTrack_absD0[0]>0.5 && RecoElectronTrack_absD0[1]>0.5", #both electrons displaced
     "sel2RecoEle_vetoes_MissingEnergyGt10_absD0Gt0p5": "n_RecoElectrons==2 && n_RecoMuons==0 && n_RecoPhotons==0 && n_RecoJets==0 && n_RecoPhotons==0 && RecoMissingEnergy_p[0]>10 && RecoElectronTrack_absD0[0]>0.5 && RecoElectronTrack_absD0[1]>0.5", #both electrons displaced
     # "sel2RecoEle_vetoes_MissingEnergyGt10_chi2Gt1_LxyzGt5": "n_RecoElectrons==2 && n_RecoMuons==0 && n_RecoPhotons==0 && n_RecoJets==0 && n_RecoPhotons==0 && RecoMissingEnergy_p[0]>10 && RecoDecayVertex.chi2>1 && Reco_Lxyz>5", #displaced vertex
+}
+
+###Dictionary for prettier names of cuts (optional)
+cutLabels = {
+    "selNone": "Before selection",
+    "sel2RecoEle": "Exactly 2 electrons",
+    "sel2RecoEle_vetoes": "Veto photons, muons, and jets",
+    "sel2RecoEle_vetoes_MissingEnergyGt10": "$\\not\\! p >$ 10 GeV",
+    "sel2RecoEle_vetoes_MissingEnergyGt10_absD0Gt0p5": "Electron $|d_0| >$ 0.5 mm",
 }
 
 ###Dictionary for the ouput variable/hitograms. The key is the name of the variable in the output files. "name" is the name of the variable in the input file, "title" is the x-axis label of the histogram, "bin" the number of bins of the histogram, "xmin" the minimum x-axis value and "xmax" the maximum x-axis value.
@@ -139,6 +188,7 @@ histoList = {
     "RecoElectronTrack_absZ0":             {"name":"RecoElectronTrack_absZ0",     "title":"Reco electron tracks |z_{0}| [mm]",      "bin":100,"xmin":0, "xmax":2000},
     "RecoElectronTrack_absZ0_prompt":      {"name":"RecoElectronTrack_absZ0",     "title":"Reco electron tracks |z_{0}| [mm]",      "bin":100,"xmin":0, "xmax":1},
     "RecoElectronTrack_absD0sig":          {"name":"RecoElectronTrack_absD0sig",  "title":"Reco electron tracks |d_{0} significance|",      "bin":100,"xmin":0, "xmax":600000},
+    "RecoElectronTrack_absD0sig_med":      {"name":"RecoElectronTrack_absD0sig",  "title":"Reco electron tracks |d_{0} significance|",      "bin":100,"xmin":0, "xmax":1000},
     "RecoElectronTrack_absD0sig_prompt":   {"name":"RecoElectronTrack_absD0sig",  "title":"Reco electron tracks |d_{0} significance|",      "bin":100,"xmin":0, "xmax":5},
     "RecoElectronTrack_absZ0sig":          {"name":"RecoElectronTrack_absZ0sig",  "title":"Reco electron tracks |z_{0} significance|",      "bin":100,"xmin":0, "xmax":600000},
     "RecoElectronTrack_absZ0sig_prompt":   {"name":"RecoElectronTrack_absZ0sig",  "title":"Reco electron tracks |z_{0} significance|",      "bin":100,"xmin":0, "xmax":5},
