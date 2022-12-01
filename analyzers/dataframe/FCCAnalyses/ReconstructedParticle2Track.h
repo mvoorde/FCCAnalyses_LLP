@@ -17,6 +17,14 @@ namespace FCCAnalyses{
 
 namespace ReconstructedParticle2Track{
 
+  /// Return the momentum of a track to a reconstructed particle
+  ROOT::VecOps::RVec<float> getRP2TRK_mom (ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in, 
+					   ROOT::VecOps::RVec<edm4hep::TrackState> tracks);
+
+  /// Return the charge of a track to a reconstructed particle
+  ROOT::VecOps::RVec<float> getRP2TRK_charge(ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in,  
+					     ROOT::VecOps::RVec<edm4hep::TrackState> tracks);
+
   //compute the magnetic field Bz
   ROOT::VecOps::RVec<float> getRP2TRK_Bz(const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& rps, 
 					 const ROOT::VecOps::RVec<edm4hep::TrackState>& tracks); //here computed for all particles passed
@@ -144,8 +152,15 @@ namespace ReconstructedParticle2Track{
   ROOT::VecOps::RVec<edm4hep::TrackState> getRP2TRK( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in,
 						     ROOT::VecOps::RVec<edm4hep::TrackState> tracks ) ;
 
+  /// Return the reco indices of particles that have tracks
+  ROOT::VecOps::RVec<int> get_recoindTRK( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in, 
+					  ROOT::VecOps::RVec<edm4hep::TrackState> tracks ) ;
+  
   /// Return the size of a collection of TrackStates
   int getTK_n(ROOT::VecOps::RVec<edm4hep::TrackState> x) ;
+
+  /// Return if a Reco particle have an associated track
+  ROOT::VecOps::RVec<bool> hasTRK( ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> in ) ;
 
 }//end NS ReconstructedParticle2Track
 
