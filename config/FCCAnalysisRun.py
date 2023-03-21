@@ -17,7 +17,7 @@ ROOT.gErrorIgnoreLevel = ROOT.kFatal
 _fcc  = ROOT.dummyLoader
 
 
-date=datetime.datetime.fromtimestamp(datetime.datetime.now().timestamp()).strftime('%Y-%m-%d_%H-%M-%S')
+DATE = datetime.datetime.fromtimestamp(datetime.datetime.now().timestamp()).strftime('%Y-%m-%d_%H-%M-%S')
 
 #__________________________________________________________
 def getElement(rdfModule, element, isFinal=False):
@@ -58,12 +58,12 @@ def getElement(rdfModule, element, isFinal=False):
             return ""
 
         elif element=='batchQueue':
-            print('The variable <{}> is optional in your analysys.py file, return default value workday'.format(element))
+            print('The variable <{}> is optional in your analysis.py file, return default value workday'.format(element))
             if isFinal: print('The option <{}> is not available in final analysis'.format(element))
             return "workday"
 
         elif element=='compGroup':
-             print('The variable <{}> is optional in your analysys.py file, return default value group_u_FCC.local_gen'.format(element))
+             print('The variable <{}> is optional in your analysis.py file, return default value group_u_FCC.local_gen'.format(element))
              if isFinal: print('The option <{}> is not available in final analysis'.format(element))
              return "group_u_FCC.local_gen"
 
@@ -83,7 +83,7 @@ def getElement(rdfModule, element, isFinal=False):
             return ""
 
         elif element=='testFile':
-            print('The variable <{}> is optional in your analysys.py file, return default file'.format(element))
+            print('The variable <{}> is optional in your analysis.py file, return default file'.format(element))
             if isFinal: print('The option <{}> is not available in final analysis'.format(element))
             return "root://eospublic.cern.ch//eos/experiment/fcc/ee/generation/DelphesEvents/spring2021/IDEA/p8_ee_Zbb_ecm91_EvtGen_Bc2TauNuTAUHADNU/events_131527278.root"
 
@@ -154,12 +154,12 @@ def getElement(rdfModule, element, isFinal=False):
             else: print('The option <{}> is not available in presel analysis'.format(element))
 
         elif element=='geometryFile':
-            print('The variable <{}> is optional in your analysys.py file, return default value empty string'.format(element))
+            print('The variable <{}> is optional in your analysis.py file, return default value empty string'.format(element))
             if isFinal: print('The option <{}> is not available in final analysis'.format(element))
             return ""
 
         elif element=='readoutName':
-            print('The variable <{}> is optional in your analysys.py file, return default value empty string'.format(element))
+            print('The variable <{}> is optional in your analysis.py file, return default value empty string'.format(element))
             if isFinal: print('The option <{}> is not available in final analysis'.format(element))
             return ""
 
@@ -395,9 +395,20 @@ def runRDF(rdfModule, inputlist, outFile, nevt, args):
 #__________________________________________________________
 def sendToBatch(rdfModule, chunkList, process, analysisFile):
     localDir = os.environ["LOCAL_DIR"]
-    logDir   = localDir+"/BatchOutputs/{}/{}".format(date,process)
+    logDir   = localDir+"/BatchOutputs/{}/{}".format(DATE, process)
     if not os.path.exists(logDir):
         os.system("mkdir -p {}".format(logDir))
+
+    # Making sure the FCCAnalyses libraries are compiled and installed
+    try:
+        subprocess.check_output(['make', 'install'],
+                                cwd=localDir+'/build',
+                                stderr=subprocess.DEVNULL
+        )
+    except subprocess.CalledProcessError as e:
+        print("----> The FCCanalyses libraries are not properly build and installed!")
+        print('----> Aborting job submission...')
+        sys.exit(3)
 
     outputDir       = getElement(rdfModule, "outputDir")
     outputDirEos    = getElement(rdfModule, "outputDirEos")
@@ -422,10 +433,7 @@ def sendToBatch(rdfModule, chunkList, process, analysisFile):
 
         subprocess.getstatusoutput('chmod 777 %s'%(frunname))
         frun.write('#!/bin/bash\n')
-        frun.write('source /cvmfs/sw.hsf.org/key4hep/setup.sh\n')
-        frun.write('export PYTHONPATH=$LOCAL_DIR:$PYTHONPATH\n')
-        frun.write('export LD_LIBRARY_PATH=$LOCAL_DIR/install/lib:$LD_LIBRARY_PATH\n')
-        frun.write('export ROOT_INCLUDE_PATH=$LOCAL_DIR/install/include/FCCAnalyses:$ROOT_INCLUDE_PATH\n')
+        frun.write('source ${LOCAL_DIR}/setup.sh\n')
 
         #add userBatchConfig if any
         if userBatchConfig!="":
@@ -576,10 +584,9 @@ def runLocal(rdfModule, fileList, args):
     if args.bench:
         import json
 
-        analysis_path = args.pathToAnalysisScript.rsplit('/', 1)[0]
         analysis_name = getElement(rdfModule, 'analysisName')
         if not analysis_name:
-            analysis_name = analysis_path
+            analysis_name = args.pathToAnalysisScript
 
         bench_time = {}
         bench_time['name'] = 'Time spent running the analysis: '
@@ -587,7 +594,7 @@ def runLocal(rdfModule, fileList, args):
         bench_time['unit'] = 'Seconds'
         bench_time['value'] = elapsed_time
         bench_time['range'] = 10
-        bench_time['extra'] = 'Analysis path: ' + analysis_path
+        bench_time['extra'] = 'Analysis path: ' + args.pathToAnalysisScript
         saveBenchmark('benchmarks_smaller_better.json', bench_time)
 
         bench_evt_per_sec = {}
@@ -596,7 +603,7 @@ def runLocal(rdfModule, fileList, args):
         bench_evt_per_sec['unit'] = 'Evt/s'
         bench_evt_per_sec['value'] = nevents_local / elapsed_time
         bench_time['range'] = 1000
-        bench_time['extra'] = 'Analysis path: ' + analysis_path
+        bench_time['extra'] = 'Analysis path: ' + args.pathToAnalysisScript
         saveBenchmark('benchmarks_bigger_better.json', bench_evt_per_sec)
 
 
@@ -879,8 +886,28 @@ def runFinal(rdfModule):
             histos = []
 
             for v in histoList:
-                model = ROOT.RDF.TH1DModel(v, ";{};".format(histoList[v]["title"]), histoList[v]["bin"], histoList[v]["xmin"], histoList[v]["xmax"])
-                histos.append(df_cut.Histo1D(model,histoList[v]["name"]))
+                if "name" in histoList[v]: # default 1D histogram
+                    model = ROOT.RDF.TH1DModel(v, ";{};".format(histoList[v]["title"]), histoList[v]["bin"], histoList[v]["xmin"], histoList[v]["xmax"])
+                    histos.append(df_cut.Histo1D(model,histoList[v]["name"]))
+                elif "cols" in histoList[v]: # multi dim histogram (1, 2 or 3D)
+                    cols = histoList[v]['cols']
+                    bins = histoList[v]['bins']
+                    bins_unpacked = tuple([i for sub in bins for i in sub])
+                    if len(bins) != len(cols):
+                        print ('----> Amount of columns should be equal to the amount of bin configs.')
+                        sys.exit(3)
+                    if len(cols) == 1:
+                        histos.append(df_cut.Histo1D((v, "", *bins_unpacked), cols[0]))
+                    elif len(cols) == 2:
+                        histos.append(df_cut.Histo2D((v, "", *bins_unpacked), cols[0], cols[1]))
+                    elif len(cols) == 3:
+                        histos.append(df_cut.Histo3D((v, "", *bins_unpacked), cols[0], cols[1], cols[2]))
+                    else:
+                        print ('----> Only 1, 2 or 3D histograms supported.')
+                        sys.exit(3)
+                else:
+                    print ('----> Error parsing the histogram config. Provide either name or cols.')
+                    sys.exit(3)
             histos_list.append(histos)
 
             if doTree:
@@ -1034,7 +1061,7 @@ def setup_run_parser(parser):
     publicOptions.add_argument("--rerunfailed", action='store_true', help="Rerun failed jobs", default=False)
     publicOptions.add_argument("--jobdir", help="Specify the batch job directory", type=str, default="output.root")
     publicOptions.add_argument("--eloglevel", help="Specify the RDataFrame ELogLevel", type=str, default="kUnset", choices = ['kUnset','kFatal','kError','kWarning','kInfo','kDebug'])
-
+    
     internalOptions = parser.add_argument_group('\033[4m\033[1m\033[91m Internal options, NOT FOR USERS\033[0m')
     internalOptions.add_argument("--batch", action='store_true', help="Submit on batch", default=False)
 
@@ -1071,12 +1098,13 @@ def run(mainparser, subparser=None):
     rdfSpec.loader.exec_module(rdfModule)
 
     try:
+        print(args.command)
         args.command
         if args.command == "run":      runStages(args, rdfModule, args.preprocess, analysisFile)
         elif args.command == "final":  runFinal(rdfModule)
         elif args.command == "plots":  runPlots(analysisFile)
         return
-    except AttributeError:
+    except Exception as e:
         print("============running the old way")
 
 
