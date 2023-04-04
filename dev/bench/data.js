@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1680596960334,
+  "lastUpdate": 1680596962322,
   "repoUrl": "https://github.com/mvoorde/FCCAnalyses_LLP",
   "entries": {
     "Benchmark": [
@@ -1026,6 +1026,60 @@ window.BENCHMARK_DATA = {
             "unit": "Seconds",
             "range": 10,
             "extra": "Analysis path: examples/FCCee/vertex_lcfiplus/analysis_V0.py"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "juliette.alimena@cern.ch",
+            "name": "Juliette Alimena",
+            "username": "jalimena"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": false,
+          "id": "ba9f4c0277aa1a6c87ab7176d611e932eb345fe4",
+          "message": "Merge pull request #18 from mvoorde/add_ExoticHiggsDecays_Reco_analysis\n\nAdd exotic higgs decays reconstructed analysis files",
+          "timestamp": "2023-03-31T13:48:50+02:00",
+          "tree_id": "8b0f63e02513d9e1a814ab684e343f50dbe6cc00",
+          "url": "https://github.com/mvoorde/FCCAnalyses_LLP/commit/ba9f4c0277aa1a6c87ab7176d611e932eb345fe4"
+        },
+        "date": 1680596961565,
+        "tool": "customBiggerIsBetter",
+        "benches": [
+          {
+            "name": "prod | Events processed per second: examples/FCCee/weaver/analysis_inference.py",
+            "value": 1.9419265751701569,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "prod | Events processed per second: case-studies/analysis_example/scripts/analysis_example.py",
+            "value": 7.23223645581679,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "prod | Events processed per second: examples/FCCee/higgs/mH-recoil/mumu/analysis_stage1.py",
+            "value": 6.249892713481099,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "prod | Events processed per second: examples/FCCee/flavour/Bc2TauNu/analysis_B2TauNu_truth.py",
+            "value": 4.448754612941429,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "prod | Events processed per second: examples/FCCee/test/jet_constituents.py",
+            "value": 6.306098350473406,
+            "unit": "Evt/s"
+          },
+          {
+            "name": "prod | Events processed per second: examples/FCCee/vertex_lcfiplus/analysis_V0.py",
+            "value": 3.3044720881412943,
+            "unit": "Evt/s"
           }
         ]
       }
