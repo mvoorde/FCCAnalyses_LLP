@@ -1,15 +1,17 @@
 import ROOT
 
+testFile = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/output_MadgraphPythiaDelphes/exoticHiggs_scalar_ms20GeV_sine-6.root"
+
 #Mandatory: List of processes
 processList = {
 
         #privately-produced signals
-        'exoticHiggs_scalar_ms20GeV_sine-5':{},
+        # 'exoticHiggs_scalar_ms20GeV_sine-5':{},
         'exoticHiggs_scalar_ms20GeV_sine-6':{},
-        'exoticHiggs_scalar_ms20GeV_sine-7':{},
-        'exoticHiggs_scalar_ms60GeV_sine-5':{},
-        'exoticHiggs_scalar_ms60GeV_sine-6':{},
-        'exoticHiggs_scalar_ms60GeV_sine-7':{},
+        # 'exoticHiggs_scalar_ms20GeV_sine-7':{},
+        # 'exoticHiggs_scalar_ms60GeV_sine-5':{},
+        # 'exoticHiggs_scalar_ms60GeV_sine-6':{},
+        # 'exoticHiggs_scalar_ms60GeV_sine-7':{},
 
         # #centrally produced backgrounds
         # 'p8_ee_ZH_ecm240':{'fraction':0.01},
@@ -32,7 +34,7 @@ inputDir = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/output
 #Optional: output directory, default is local dir
 #outputDir = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/Reco_output_stage1/"
 #outputDirEos = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/Reco_output_stage1/"
-outputDir = "Reco_output_stage1/"
+outputDir = "Reco_output_stage1_230417/"
 
 #Optional: ncpus, default is 4
 nCPUS       = 8
@@ -58,6 +60,33 @@ int filter_n_DVs(ROOT::VecOps::RVec<double> distanceDV, ROOT::VecOps::RVec<doubl
             result += 1;
     }
     return result;
+}
+""")
+ROOT.gInterpreter.Declare("""
+ROOT::VecOps::RVec<int> get_VertexTrack2MC(ROOT::VecOps::RVec<int> vertexRecoInd, ROOT::VecOps::RVec<int> RPMCindex) {
+    ROOT::VecOps::RVec<int> mcind;
+    std::cout << vertexRecoInd;
+    std::cout << RPMCindex;
+    for (size_t i = 0; i < vertexRecoInd.size(); ++i) {
+        mcind[i] = RPMCindex[vertexRecoInd[i]];
+    }
+    return mcind;
+}
+""")
+ROOT.gInterpreter.Declare("""
+int truthmatchDV(ROOT::VecOps::RVec<int> truthind1, ROOT::VecOps::RVec<int> truthind2, ROOT::VecOps::RVec<int> DVind) {
+    int matchedDVs = 0;
+    for (size_t i = 0; i < DVind.size(); ++i) {
+        for (size_t j = 0; j < truthind1.size(); ++j) {
+            if (DVind[i] == truthind1[j])
+                matchedDVs += 1;
+        }
+        for (size_t j = 0; j < truthind2.size(); ++j) {
+            if (DVind[i] == truthind1[j])
+                matchedDVs += 1;
+        }
+    }
+    return matchedDVs;
 }
 """)
 #END USER DEFINED CODE
@@ -102,7 +131,7 @@ class RDFanalysis():
             # select tracks with |d0 |> 2 mm
             .Define('sel_tracks', 'VertexingUtils::sel_d0_tracks(2)(sel_tracks_pt)')
             # find the DVs
-            .Define("DV_evt_seltracks", "VertexFinderLCFIPlus::get_SV_event(sel_tracks, PrimaryVertexObject, true, 9., 40., 5.)")
+            .Define("DV_evt_seltracks", "VertexFinderLCFIPlus::get_SV_event(sel_tracks, EFlowTrack_1, PrimaryVertexObject, true, 9., 40., 5.)")
             # number of DVs
             .Define('n_seltracks_DVs', 'VertexingUtils::get_n_SV(DV_evt_seltracks)')
             # number of tracks from the DVs
@@ -117,6 +146,7 @@ class RDFanalysis():
             # get the decay radius of all the DVs from selected tracks
             .Define("Reco_seltracks_DVs_Lxy","VertexingUtils::get_dxy_SV(DV_evt_seltracks, PrimaryVertexObject)")
             .Define("Reco_seltracks_DVs_Lxyz","VertexingUtils::get_d3d_SV(DV_evt_seltracks, PrimaryVertexObject)")
+
             
             # merge vertices with position within 10*error-of-position, get the tracks from the merged vertices and refit
             .Define('merged_DVs', 'VertexingUtils::mergeVertices(DV_evt_seltracks)')
@@ -134,6 +164,31 @@ class RDFanalysis():
             # get the decay radius of all the merged DVs
             .Define("Reco_DVs_merged_Lxy","VertexingUtils::get_dxy_SV(merged_DVs, PrimaryVertexObject)")
             .Define("Reco_DVs_merged_Lxyz","VertexingUtils::get_d3d_SV(merged_DVs, PrimaryVertexObject)")
+
+             #### Under construction
+
+            # find the indices of the tracks belonging to each DV
+            .Define('recoind_seltracks_DVs','VertexingUtils::get_VertexRecoParticlesInd(merged_DVs[0], ReconstructedParticles)')
+
+            # returns a vector with the MC indices, like [index reco] = index MC
+            .Define('RP_MC_index', "ReconstructedParticle2MC::getRP2MC_index(MCRecoAssociations0, MCRecoAssociations1, ReconstructedParticles)")
+
+            # add code/function which returns the MC particles/indices to each vertex, i.e write a function which loops through the RP_MC_index with the relevant track indices
+            .Define('Vertex_MC_index', 'get_VertexTrack2MC(recoind_seltracks_DVs, RP_MC_index)')
+
+            # add code/function which get the MC particles/indices of the truth decays
+            
+            # get the indices of the Higgs and the scalars, sorted in order h hs hs
+            .Define('H2HSHS_indices', 'MCParticle::get_indices_ExclusiveDecay(25, {35, 35}, false, false)(Particle, Particle1)')
+
+            # get the indices of the b quarks from related scalar, 1 are from the "first" scalar and 2 from the second one
+            .Define('bquarks1_indices', 'MCParticle::get_indices_ExclusiveDecay_MotherByIndex(H2HSHS_indices[1], {5, -5}, false, Particle, Particle1)')
+            .Define('bquarks2_indices', 'MCParticle::get_indices_ExclusiveDecay_MotherByIndex(H2HSHS_indices[2], {5, -5}, false, Particle, Particle1)')
+
+
+            # add code/function which compare the MC particles/indices of the truth decays with the vertices, set a threshold for how many should be equal for it to be a match, check Atlas paper
+            .Define('truthmatch_score', 'truthmatchDV(bquarks1_indices, bquarks2_indices, Vertex_MC_index)')
+
 
             # Reconstructed electrons and muons
 
@@ -192,45 +247,50 @@ class RDFanalysis():
     #Mandatory: output function, please make sure you return the branchlist as a python list
     def output():
         branchList = [
-            "n_tracks",
-            "n_RecoedPrimaryTracks",
+            # "n_tracks",
+            # "n_RecoedPrimaryTracks",
 
-            'n_seltracks_DVs',
-            'n_trks_seltracks_DVs',
-            'invMass_seltracks_DVs',
-            "DV_evt_seltracks_chi2",
-            "DV_evt_seltracks_normchi2",
-            "Reco_seltracks_DVs_Lxy",
-            "Reco_seltracks_DVs_Lxyz",
+            # 'n_seltracks_DVs',
+            # 'n_trks_seltracks_DVs',
+            # 'invMass_seltracks_DVs',
+            # "DV_evt_seltracks_chi2",
+            # "DV_evt_seltracks_normchi2",
+            # "Reco_seltracks_DVs_Lxy",
+            # "Reco_seltracks_DVs_Lxyz",
+            "recoind_seltracks_DVs",
 
-            "merged_DVs_n",
-            'n_trks_merged_DVs',
-            'invMass_merged_DVs',
-            "merged_DVs_chi2",
-            "merged_DVs_normchi2",
-            "Reco_DVs_merged_Lxy",
-            "Reco_DVs_merged_Lxyz",
+            'Vertex_MC_index',
 
-            'n_RecoElectrons',
-            "RecoElectron_e",
-            "RecoElectron_p",
-            "RecoElectron_pt",
-            "RecoElectron_px",
-            "RecoElectron_py",
-            "RecoElectron_pz",
-            "RecoElectron_charge",
-            "Reco_ee_invMass",
-            'n_RecoMuons',
-            "RecoMuon_e",
-            "RecoMuon_p",
-            "RecoMuon_pt",
-            "RecoMuon_px",
-            "RecoMuon_py",
-            "RecoMuon_pz",
-            "RecoMuon_charge",
-            "Reco_mumu_invMass",
+            "truthmatch_score",
 
-            "filter_n_DVs_seltracks",
-            "filter_n_DVs_merge",
+            # "merged_DVs_n",
+            # 'n_trks_merged_DVs',
+            # 'invMass_merged_DVs',
+            # "merged_DVs_chi2",
+            # "merged_DVs_normchi2",
+            # "Reco_DVs_merged_Lxy",
+            # "Reco_DVs_merged_Lxyz",
+
+            # 'n_RecoElectrons',
+            # "RecoElectron_e",
+            # "RecoElectron_p",
+            # "RecoElectron_pt",
+            # "RecoElectron_px",
+            # "RecoElectron_py",
+            # "RecoElectron_pz",
+            # "RecoElectron_charge",
+            # "Reco_ee_invMass",
+            # 'n_RecoMuons',
+            # "RecoMuon_e",
+            # "RecoMuon_p",
+            # "RecoMuon_pt",
+            # "RecoMuon_px",
+            # "RecoMuon_py",
+            # "RecoMuon_pz",
+            # "RecoMuon_charge",
+            # "Reco_mumu_invMass",
+
+            # "filter_n_DVs_seltracks",
+            # "filter_n_DVs_merge",
         ]
         return branchList
