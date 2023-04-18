@@ -14,7 +14,7 @@ include(CTest)
 #--- options ------------------------------------------------------------------
 
 
-set(WITH_ACTS AUTO CACHE STRING "Build analyzers that need Acts")
+set(WITH_ACTS OFF CACHE STRING "Build analyzers that need Acts")
 set_property(CACHE WITH_ACTS PROPERTY STRINGS AUTO ON OFF)
 
 set(WITH_DD4HEP AUTO CACHE STRING "Build analyzers that need DD4hep")
@@ -62,6 +62,8 @@ find_package(podio)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 find_package(FastJet)
 
+find_package( Delphes REQUIRED )
+
 
 if(WITH_ACTS)
   find_package( Acts COMPONENTS Core )
@@ -88,6 +90,17 @@ if(WITH_DD4HEP)
   endif()
 endif()
 
+if(WITH_ONNX)
+  find_package(ONNXRuntime)
+  if(ONNXRuntime_FOUND)
+
+  elseif(WITH_ONNX STREQUAL AUTO)
+    message(WARNING "ONNXRuntime not found. Skipping ONNX-dependent analyzers.")
+    set(WITH_ONNX OFF)
+  else()
+    message(FATAL_ERROR "Failed to locate ONNXRuntime!")
+  endif()
+endif()
 
 if(WITH_ONNX AND BUILD_TESTING) # currently these files are only needed by ONNX-parts
 # Grab the test files into a cached directory
