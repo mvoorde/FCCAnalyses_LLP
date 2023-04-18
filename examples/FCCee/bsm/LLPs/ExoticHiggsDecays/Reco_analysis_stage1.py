@@ -1,5 +1,7 @@
 import ROOT
 
+testFile = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/output_MadgraphPythiaDelphes/exoticHiggs_scalar_ms20GeV_sine-6.root"
+
 #Mandatory: List of processes
 processList = {
 
@@ -88,7 +90,7 @@ class RDFanalysis():
             .Define("VertexObject_allTracks",  "VertexFitterSimple::VertexFitter_Tk ( 1, EFlowTrack_1, true, 4.5, 20e-3, 300)")
 
             # Select the tracks that are reconstructed  as primaries
-            .Define("RecoedPrimaryTracks",  "VertexFitterSimple::get_PrimaryTracks( VertexObject_allTracks, EFlowTrack_1, true, 4.5, 20e-3, 300, 0., 0., 0., 0)")
+            .Define("RecoedPrimaryTracks",  "VertexFitterSimple::get_PrimaryTracks( EFlowTrack_1, true, 4.5, 20e-3, 300, 0., 0., 0.)")
             .Define("n_RecoedPrimaryTracks",  "ReconstructedParticle2Track::getTK_n( RecoedPrimaryTracks )")
 
             # the final primary vertex :
@@ -102,7 +104,7 @@ class RDFanalysis():
             # select tracks with |d0 |> 2 mm
             .Define('sel_tracks', 'VertexingUtils::sel_d0_tracks(2)(sel_tracks_pt)')
             # find the DVs
-            .Define("DV_evt_seltracks", "VertexFinderLCFIPlus::get_SV_event(sel_tracks, PrimaryVertexObject, true, 9., 40., 5.)")
+            .Define("DV_evt_seltracks", "VertexFinderLCFIPlus::get_SV_event(sel_tracks, EFlowTrack_1, PrimaryVertexObject, true, 9., 40., 5.)")
             # number of DVs
             .Define('n_seltracks_DVs', 'VertexingUtils::get_n_SV(DV_evt_seltracks)')
             # number of tracks from the DVs
@@ -119,7 +121,7 @@ class RDFanalysis():
             .Define("Reco_seltracks_DVs_Lxyz","VertexingUtils::get_d3d_SV(DV_evt_seltracks, PrimaryVertexObject)")
             
             # merge vertices with position within 10*error-of-position, get the tracks from the merged vertices and refit
-            .Define('merged_DVs', 'VertexingUtils::mergeVertices(DV_evt_seltracks)')
+            .Define('merged_DVs', 'VertexingUtils::mergeVertices(DV_evt_seltracks, EFlowTrack_1)')
             # number of merged DVs
             .Define("merged_DVs_n", "VertexingUtils::get_n_SV(merged_DVs)")
             # number of tracks from the merged DVs
