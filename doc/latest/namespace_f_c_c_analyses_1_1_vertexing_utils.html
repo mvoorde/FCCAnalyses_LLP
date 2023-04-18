@@ -326,6 +326,8 @@ Functions</h2></td></tr>
 <tr class="separator:a5f43b223d06744303442542fc44809ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2d9a8e8d87409a8f6d22cbee921e0d16"><td class="memItemLeft" align="right" valign="top">TMatrixDSym&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#a2d9a8e8d87409a8f6d22cbee921e0d16">CovToACTS</a> (TMatrixDSym Cov, TVectorD Par)</td></tr>
 <tr class="separator:a2d9a8e8d87409a8f6d22cbee921e0d16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c5e180d5145899adfe87b831acf3cff"><td class="memItemLeft" align="right" valign="top">ROOT::VecOps::RVec&lt; <a class="el" href="struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_vertex.html">FCCAnalysesVertex</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#a4c5e180d5145899adfe87b831acf3cff">mergeVertices</a> (ROOT::VecOps::RVec&lt; <a class="el" href="struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_vertex.html">FCCAnalysesVertex</a> &gt; vertices_in, const ROOT::VecOps::RVec&lt; edm4hep::TrackState &gt; &amp;alltracks)</td></tr>
+<tr class="separator:a4c5e180d5145899adfe87b831acf3cff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9f6e46b2c7bdc3576180b52b20ada52"><td class="memItemLeft" align="right" valign="top">ROOT::VecOps::RVec&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#af9f6e46b2c7bdc3576180b52b20ada52">get_relTheta_SV</a> (ROOT::VecOps::RVec&lt; <a class="el" href="struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_vertex.html">FCCAnalysesVertex</a> &gt; vertices, fastjet::PseudoJet jet)</td></tr>
 <tr class="separator:af9f6e46b2c7bdc3576180b52b20ada52"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab2242582200e5fd506468182328d3556"><td class="memItemLeft" align="right" valign="top">ROOT::VecOps::RVec&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_f_c_c_analyses_1_1_vertexing_utils.html#ab2242582200e5fd506468182328d3556">get_relPhi_SV</a> (ROOT::VecOps::RVec&lt; <a class="el" href="struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_vertex.html">FCCAnalysesVertex</a> &gt; vertices, fastjet::PseudoJet jet)</td></tr>
@@ -2219,7 +2221,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="aed1f9047902d1699311c1724b525dc0e" name="aed1f9047902d1699311c1724b525dc0e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aed1f9047902d1699311c1724b525dc0e">&#9670;&#160;</a></span>mergeVertices()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aed1f9047902d1699311c1724b525dc0e">&#9670;&#160;</a></span>mergeVertices() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2235,6 +2237,34 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Merge vertices that are within 10*error of position or 1 mm, of each other. </p>
+
+</div>
+</div>
+<a id="a4c5e180d5145899adfe87b831acf3cff" name="a4c5e180d5145899adfe87b831acf3cff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c5e180d5145899adfe87b831acf3cff">&#9670;&#160;</a></span>mergeVertices() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ROOT::VecOps::RVec&lt; <a class="el" href="struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_vertex.html">FCCAnalysesVertex</a> &gt; FCCAnalyses::VertexingUtils::mergeVertices </td>
+          <td>(</td>
+          <td class="paramtype">ROOT::VecOps::RVec&lt; <a class="el" href="struct_f_c_c_analyses_1_1_vertexing_utils_1_1_f_c_c_analyses_vertex.html">FCCAnalysesVertex</a> &gt;&#160;</td>
+          <td class="paramname"><em>vertices_in</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ROOT::VecOps::RVec&lt; edm4hep::TrackState &gt; &amp;&#160;</td>
+          <td class="paramname"><em>alltracks</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -2364,7 +2394,7 @@ Functions</h2></td></tr>
 <!-- HTML footer for doxygen 1.8.15-->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Apr 18 2023 11:21:40 for FCCAnalyses by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Apr 18 2023 19:21:40 for FCCAnalyses by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.9.6
 </small></address>
