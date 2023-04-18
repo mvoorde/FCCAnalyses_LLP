@@ -6,13 +6,18 @@ find_package(Vdt)
 
 message(STATUS "includes-------------------------- dataframe edm4hep: ${EDM4HEP_INCLUDE_DIRS}")
 message(STATUS "includes-------------------------- dataframe podio  : ${podio_INCLUDE_DIR}")
+message(STATUS "includes-------------------------- dataframe delphes: ${DELPHES_INCLUDE_DIR}")
+message(STATUS "includes-------------------------- dataframe delphes EXt TrkCov: ${DELPHES_EXTERNALS_TKCOV_INCLUDE_DIR}")
+message(STATUS "includes-------------------------- dataframe delphes EXt: ${DELPHES_EXTERNALS_INCLUDE_DIR}")
+
+include_directories(${DELPHES_INCLUDE_DIR}
+                    ${DELPHES_EXTERNALS_INCLUDE_DIR}
+                    ${DELPHES_EXTERNALS_TKCOV_INCLUDE_DIR}
+                    )
 
 
 file(GLOB sources src/*.cc)
 file(GLOB headers RELATIVE ${CMAKE_CURRENT_LIST_DIR} FCCAnalyses/*.h)
-
-message(STATUS "includes headers ${headers}")
-message(STATUS "includes sources ${sources}")
 
 list(FILTER headers EXCLUDE REGEX "LinkDef.h")
 if(NOT WITH_DD4HEP)
@@ -22,6 +27,8 @@ endif()
 if(NOT WITH_ONNX)
   list(FILTER headers EXCLUDE REGEX "JetFlavourUtils.h")
   list(FILTER sources EXCLUDE REGEX "JetFlavourUtils.cc")
+  list(FILTER headers EXCLUDE REGEX "WeaverUtils.h")
+  list(FILTER sources EXCLUDE REGEX "WeaverUtils.cc")
 endif()
 
 if(NOT WITH_ACTS)
@@ -31,6 +38,8 @@ if(NOT WITH_ACTS)
   list(FILTER sources EXCLUDE REGEX "VertexFinderActs.cc")
 endif()
 
+message(STATUS "includes headers ${headers}")
+message(STATUS "includes sources ${sources}")
 
 message(STATUS "CMAKE_CURRENT_SOURCE_DIR  ${CMAKE_CURRENT_SOURCE_DIR}")
 message(STATUS "CMAKE_INSTALL_INCLUDEDIR  ${CMAKE_INSTALL_INCLUDEDIR}")
@@ -41,8 +50,13 @@ target_include_directories(FCCAnalyses  PUBLIC
                            $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/addons>
                            $<INSTALL_INTERFACE:include>
                            ${VDT_INCLUDE_DIR}
+                           ${DELPHES_INCLUDE_DIR}
+                           ${DELPHES_EXTERNALS_INCLUDE_DIR}
+                           ${DELPHES_EXTERNALS_TKCOV_INCLUDE_DIR}
                            )
 
+message(STATUS " ====== DELPHES LIBRARY = " ${DELPHES_LIBRARY} )
+message(STATUS " ====== DELPHES_EXTERNALS_TKCOV_INCLUDE_DIR = " ${DELPHES_EXTERNALS_TKCOV_INCLUDE_DIR} )
 
 
 target_link_libraries(FCCAnalyses
@@ -53,6 +67,7 @@ target_link_libraries(FCCAnalyses
                       EDM4HEP::edm4hep
                       EDM4HEP::edm4hepDict
                       podio::podio
+                      ${DELPHES_LIBRARY}
                       ${ADDONS_LIBRARIES}
                       gfortran # todo: why necessary?
                       )
