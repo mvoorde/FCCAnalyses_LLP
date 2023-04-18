@@ -84,7 +84,7 @@ namespace VertexingUtils{
   int get_Nvertex( ROOT::VecOps::RVec<FCCAnalysesVertex> TheVertexColl );
 
   /// Merge vertices that are within 10*error of position or 1 mm, of each other
-  ROOT::VecOps::RVec<FCCAnalysesVertex> mergeVertices ( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices_in );
+  ROOT::VecOps::RVec<FCCAnalysesVertex> mergeVertices ( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices_in, const ROOT::VecOps::RVec<edm4hep::TrackState>& alltracks );
 
   /// selection of tracks based on the transverse momentum pT
   struct sel_pt_tracks {

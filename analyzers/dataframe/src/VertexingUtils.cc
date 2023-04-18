@@ -73,7 +73,7 @@ ROOT::VecOps::RVec<FCCAnalysesVertex> mergeVertices ( ROOT::VecOps::RVec<FCCAnal
         }
 
         //recursive process, repeat until vertices that all have distance > threshold are found
-        result = FCCAnalyses::VertexingUtils::mergeVertices(merged_vertices);
+        result = FCCAnalyses::VertexingUtils::mergeVertices(merged_vertices, alltracks);
 
         return result;
       }
