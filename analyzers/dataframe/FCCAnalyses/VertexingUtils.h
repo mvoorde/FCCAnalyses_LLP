@@ -43,7 +43,6 @@ namespace VertexingUtils{
     ROOT::VecOps::RVec< TVector3 >  updated_track_momentum_at_vertex;
     ROOT::VecOps::RVec< TVectorD >  updated_track_parameters;
     ROOT::VecOps::RVec<float> final_track_phases;
-    // ROOT::VecOps::RVec<edm4hep::TrackState> tracks;   // added to keep track of the tracks that are associated to each vertex, used in SV finder from LCFI+ to merge vertices
   };
 
   /// Structure to keep useful information that is related to the V0
