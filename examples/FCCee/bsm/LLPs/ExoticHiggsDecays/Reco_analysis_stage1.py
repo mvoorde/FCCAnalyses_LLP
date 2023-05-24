@@ -4,12 +4,12 @@ import ROOT
 processList = {
 
         #privately-produced signals
-        'exoticHiggs_scalar_ms20GeV_sine-5':{},
+        # 'exoticHiggs_scalar_ms20GeV_sine-5':{},
         'exoticHiggs_scalar_ms20GeV_sine-6':{},
-        'exoticHiggs_scalar_ms20GeV_sine-7':{},
-        'exoticHiggs_scalar_ms60GeV_sine-5':{},
-        'exoticHiggs_scalar_ms60GeV_sine-6':{},
-        'exoticHiggs_scalar_ms60GeV_sine-7':{},
+        # 'exoticHiggs_scalar_ms20GeV_sine-7':{},
+        # 'exoticHiggs_scalar_ms60GeV_sine-5':{},
+        # 'exoticHiggs_scalar_ms60GeV_sine-6':{},
+        # 'exoticHiggs_scalar_ms60GeV_sine-7':{},
 
         # #centrally produced backgrounds
         # 'p8_ee_ZH_ecm240':{'fraction':0.01},
@@ -102,7 +102,7 @@ class RDFanalysis():
             # select tracks with |d0 |> 2 mm
             .Define('sel_tracks', 'VertexingUtils::sel_d0_tracks(2)(sel_tracks_pt)')
             # find the DVs
-            .Define("DV_evt_seltracks", "VertexFinderLCFIPlus::get_SV_event(sel_tracks, PrimaryVertexObject, true, 9., 40., 5.)")
+            .Define("DV_evt_seltracks", "VertexFinderLCFIPlus::get_SV_event(sel_tracks, EFlowTrack_1, PrimaryVertexObject, true, 9., 40., 5.)")
             # number of DVs
             .Define('n_seltracks_DVs', 'VertexingUtils::get_n_SV(DV_evt_seltracks)')
             # number of tracks from the DVs
