@@ -32,8 +32,6 @@ inputDir = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/output
 
 
 #Optional: output directory, default is local dir
-#outputDir = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/Reco_output_stage1/"
-#outputDirEos = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/Reco_output_stage1/"
 outputDir = "Vertex_output_stage1/"
 
 #Optional: ncpus, default is 4
