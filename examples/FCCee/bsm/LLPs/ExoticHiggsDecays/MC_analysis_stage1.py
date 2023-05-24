@@ -1,19 +1,17 @@
 import ROOT
 
-analysesList = ['ExoticHiggsDecays_analysis_code']
-
-testfile="/afs/cern.ch/work/u/uvandevo/exoticHiggs_scalar_ms20GeV_sine-5.root"
+#testfile="/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/output_MadgraphPythiaDelphes/exoticHiggs_scalar_ms20GeV_sine-6.root"
 
 #Mandatory: List of processes
 processList = {
 
         #privately-produced signals
-        'exoticHiggs_scalar_ms20GeV_sine-5':{},
+#        'exoticHiggs_scalar_ms20GeV_sine-5':{},
         'exoticHiggs_scalar_ms20GeV_sine-6':{},
-        'exoticHiggs_scalar_ms20GeV_sine-7':{},
-        'exoticHiggs_scalar_ms60GeV_sine-5':{},
-        'exoticHiggs_scalar_ms60GeV_sine-6':{},
-        'exoticHiggs_scalar_ms60GeV_sine-7':{},
+#         'exoticHiggs_scalar_ms20GeV_sine-7':{},
+#         'exoticHiggs_scalar_ms60GeV_sine-5':{},
+#         'exoticHiggs_scalar_ms60GeV_sine-6':{},
+#         'exoticHiggs_scalar_ms60GeV_sine-7':{},
 }
 
 #Production tag. This points to the yaml files for getting sample statistics
@@ -24,14 +22,14 @@ processList = {
 #Input directory
 #Comment out when running over centrally produced events
 #Mandatory when running over privately produced events
-inputDir = "/afs/cern.ch/work/u/uvandevo"
-#inputDir = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/output_MadgraphPythiaDelphes/"
+#inputDir = "/afs/cern.ch/work/u/uvandevo"
+inputDir = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/output_MadgraphPythiaDelphes"
 
 
 #Optional: output directory, default is local dir
 #outputDir = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/MC_output_stage1/"
 #outputDirEos = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/MC_output_stage1/"
-outputDir = "MC_output_stage1/"
+outputDir = "MC_output_stage1_230420/"
 
 #Optional: ncpus, default is 4
 nCPUS       = 4
@@ -117,6 +115,9 @@ class RDFanalysis():
             .Define('bquarks1', 'myUtils::selMC_leg(1) (bquarks1_indices, Particle)')
             .Define('bquarks2', 'myUtils::selMC_leg(1) (bquarks2_indices, Particle)')
 
+            .Define('b1_PDGs', 'MCParticle::get_pdg(bquarks1)')
+            .Define('b2_PDGs', 'MCParticle::get_pdg(bquarks1)')
+
             # # get the vertex position for the first group of b quarks
             .Define('b1_vertex_x', 'MCParticle::get_vertex_x(bquarks1)')
             .Define('b1_vertex_y', 'MCParticle::get_vertex_y(bquarks1)')
@@ -143,7 +144,7 @@ class RDFanalysis():
             .Define('LxyHS2', 'return sqrt((b2_vertex_x - HS_vertex_x.at(1))*(b2_vertex_x - HS_vertex_x.at(1)) + (b2_vertex_y - HS_vertex_y.at(1))*(b2_vertex_y - HS_vertex_y.at(1)))')
 
             # get the transverse decay length of both scalars in a vector for each event
-            .Define('LxyHS', 'ExoticHiggsDecays_analysis_code::get_both_scalars(LxyHS1, LxyHS2)')
+            .Define('LxyHS', 'myUtils::get_both_scalars(LxyHS1, LxyHS2)')
 
             # the proper lifetime of the scalars given in [ns]
             .Define('lifetimeHS1', 'return (decayLengthHS1 * 1E-3 * AllGenHS_mass.at(0)/(3E8 * AllGenHS_e.at(0))*1E9)')
@@ -173,6 +174,11 @@ class RDFanalysis():
             'n_GenHS',
             'AllGenHS_mass',
             'AllGenHS_e',
+            'H2HSHS_indices',
+            'bquarks1_indices',
+            'bquarks2_indices',
+            'b1_PDGs',
+            'b2_PDGs',
             'decayLengthsHS',
             'LxyHS',
             'lifetimeHS',

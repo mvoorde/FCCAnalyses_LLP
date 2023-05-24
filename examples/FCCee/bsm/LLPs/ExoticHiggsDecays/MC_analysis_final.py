@@ -1,9 +1,9 @@
 #Input directory where the files produced at the stage1 level are
 #inputDir  = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/MC_output_stage1/"
-inputDir = "MC_output_stage1/"
+inputDir = "MC_output_stage1_230420/"
 
 #Output directory where the files produced at the final-selection level are
-outputDir  = "MC_output_finalSel/"
+outputDir  = "MC_output_finalSel_230420/"
 
 #Integrated luminosity for scaling number of events (required only if setting doScale to true)
 #intLumi = 5e6 #pb^-1
@@ -18,8 +18,8 @@ outputDir  = "MC_output_finalSel/"
 processList = {
 
         #privately-produced signals
-        'exoticHiggs_scalar_ms20GeV_sine-5':{},
-        # 'exoticHiggs_scalar_ms20GeV_sine-6':{},
+        # 'exoticHiggs_scalar_ms20GeV_sine-5':{},
+        'exoticHiggs_scalar_ms20GeV_sine-6':{},
         # 'exoticHiggs_scalar_ms20GeV_sine-7':{},
         # 'exoticHiggs_scalar_ms60GeV_sine-5':{},
         # 'exoticHiggs_scalar_ms60GeV_sine-6':{},
@@ -78,6 +78,11 @@ histoList = {
     'n_GenHiggs':                       {"name":"n_GenHiggs",                     "title":"Number of generated Higgs bosons",      "bin":5,"xmin":-0.5 ,"xmax":4.5},
     'n_Genb':                           {"name":"n_Genb",                         "title":"Number of generated b quarks",          "bin":5,"xmin":-0.5 ,"xmax":4.5},
     'n_GenHS':                          {"name":"n_GenHS",                        "title":"Number of generated dark scalars",      "bin":5,"xmin":-0.5 ,"xmax":4.5},
+
+    'bquarks1_indices':                 {"name":"bquarks1_indices",               "title":"B quark 1 indices",      "bin":30,"xmin":-0.5 ,"xmax":29.5},
+    'bquarks2_indices':                 {"name":"bquarks2_indices",               "title":"B quark 2 indices",      "bin":30,"xmin":-0.5 ,"xmax":29.5},
+    'b1_PDGs':                          {"name":"b1_PDGs",                        "title":"B quark 1 PDG ids",      "bin":50,"xmin":-0.5 ,"xmax":49.5},
+    'b2_PDGs':                          {"name":"b2_PDGs",                        "title":"B quark 2 PDG ids",      "bin":50,"xmin":-0.5 ,"xmax":49.5},
 
     'AllGenHS_mass':                    {"name":'AllGenHS_mass',                  "title":"Generated dark scalars mass [GeV]",     "bin":50,"xmin":-0.5 ,"xmax":49.5},
     'AllGenHS_e':                       {"name":'AllGenHS_e',                     "title":"Generated dark scalars energy [GeV]",   "bin":100,"xmin":-0.5 ,"xmax":99.5},

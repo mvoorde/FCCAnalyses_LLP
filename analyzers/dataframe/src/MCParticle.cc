@@ -491,7 +491,9 @@ std::vector<int> get_list_of_stable_particles_from_decay( int i, ROOT::VecOps::R
   // returns a vector with the indices (in the Particle block) of the stable daughters of the particle i,
   // from the complete decay chain.
 
-  if ( i < 0 || i >= in.size() ) return res;
+  int n_particles = ind.size();
+
+  if ( i < 0 || i >= n_particles) return res;
 
   int db = in.at(i).daughters_begin ;
   int de = in.at(i).daughters_end;

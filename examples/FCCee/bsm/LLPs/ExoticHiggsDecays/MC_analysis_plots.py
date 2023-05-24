@@ -11,12 +11,12 @@ ana_tex        = 'e^{+}e^{-} #rightarrow Z h, Z #rightarrow l^{+}l^{-}, h #right
 delphesVersion = '3.4.2'
 energy         = 240
 collider       = 'FCC-ee'
-inputDir       = 'MC_output_finalSel/'
+inputDir       = 'MC_output_finalSel_230420/'
 #formats        = ['png','pdf']
 formats        = ['pdf']
 yaxis          = ['lin','log']
 stacksig       = ['nostack']
-outdir         = 'MC_plots/'
+outdir         = 'MC_plots23_0420/'
 splitLeg       = True
 
 variables = [
@@ -30,6 +30,10 @@ variables = [
     'n_GenHS',
     'AllGenHS_mass',
     'AllGenHS_e',
+    'bquarks1_indices',
+    'bquarks2_indices',
+    'b1_PDGs',
+    'b2_PDGs',
     'decayLengthsHS',
     'LxyHS',
     'lifetimeHS',
@@ -57,12 +61,12 @@ colors['exoticHiggs_scalar_ms60GeV_sine-7'] = ROOT.kViolet-4
 
 plots = {}
 plots['ExoticHiggs'] = {'signal':{
-                    'exoticHiggs_scalar_ms20GeV_sine-5':['exoticHiggs_scalar_ms20GeV_sine-5'],
+                    # 'exoticHiggs_scalar_ms20GeV_sine-5':['exoticHiggs_scalar_ms20GeV_sine-5'],
                     'exoticHiggs_scalar_ms20GeV_sine-6':['exoticHiggs_scalar_ms20GeV_sine-6'],
-                    'exoticHiggs_scalar_ms20GeV_sine-7':['exoticHiggs_scalar_ms20GeV_sine-7'],
-                    'exoticHiggs_scalar_ms60GeV_sine-5':['exoticHiggs_scalar_ms60GeV_sine-5'],
-                    'exoticHiggs_scalar_ms60GeV_sine-6':['exoticHiggs_scalar_ms60GeV_sine-6'],
-                    'exoticHiggs_scalar_ms60GeV_sine-7':['exoticHiggs_scalar_ms60GeV_sine-7'],
+                    # 'exoticHiggs_scalar_ms20GeV_sine-7':['exoticHiggs_scalar_ms20GeV_sine-7'],
+                    # 'exoticHiggs_scalar_ms60GeV_sine-5':['exoticHiggs_scalar_ms60GeV_sine-5'],
+                    # 'exoticHiggs_scalar_ms60GeV_sine-6':['exoticHiggs_scalar_ms60GeV_sine-6'],
+                    # 'exoticHiggs_scalar_ms60GeV_sine-7':['exoticHiggs_scalar_ms60GeV_sine-7'],
 },
 'backgrounds':{
             #
