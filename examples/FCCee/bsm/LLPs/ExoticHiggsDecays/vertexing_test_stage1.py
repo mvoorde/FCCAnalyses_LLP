@@ -6,15 +6,15 @@ testFile = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/output
 processList = {
 
         #privately-produced signals
-        'exoticHiggs_scalar_ms20GeV_sine-5':{},
+        # 'exoticHiggs_scalar_ms20GeV_sine-5':{},
         'exoticHiggs_scalar_ms20GeV_sine-6':{},
-        'exoticHiggs_scalar_ms20GeV_sine-7':{},
-        'exoticHiggs_scalar_ms60GeV_sine-5':{},
-        'exoticHiggs_scalar_ms60GeV_sine-6':{},
-        'exoticHiggs_scalar_ms60GeV_sine-7':{},
+        # 'exoticHiggs_scalar_ms20GeV_sine-7':{},
+        # 'exoticHiggs_scalar_ms60GeV_sine-5':{},
+        # 'exoticHiggs_scalar_ms60GeV_sine-6':{},
+        # 'exoticHiggs_scalar_ms60GeV_sine-7':{},
 
         # #centrally produced backgrounds
-        # 'p8_ee_ZH_ecm240':{'fraction':0.01},
+        # 'p8_ee_ZH_ecm240':{},
         # 'p8_ee_ZZ_ecm240':{'fraction':0.01},   
         # 'p8_ee_WW_ecm240':{'fraction':0.01},     
 }
@@ -53,6 +53,7 @@ class RDFanalysis():
     #__________________________________________________________
     #Mandatory: analysers funtion to define the analysers to process, please make sure you return the last dataframe, in this example it is df2
     def analysers(df):
+        
         df2 = (
             df
 
@@ -87,3 +88,4 @@ class RDFanalysis():
             "PrimaryVertex",
         ]
         return branchList
+ 
