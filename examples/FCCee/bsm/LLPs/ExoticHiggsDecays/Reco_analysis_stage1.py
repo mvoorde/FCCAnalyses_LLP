@@ -1,5 +1,7 @@
 import ROOT
 
+testFile = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/output_MadgraphPythiaDelphes/exoticHiggs_scalar_ms20GeV_sine-6.root"
+
 #Mandatory: List of processes
 processList = {
 
@@ -32,7 +34,7 @@ inputDir = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/output
 #Optional: output directory, default is local dir
 #outputDir = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/Reco_output_stage1/"
 #outputDirEos = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/Reco_output_stage1/"
-outputDir = "Reco_output_stage1/"
+outputDir = "Reco_output_stage1_230525/"
 
 #Optional: ncpus, default is 4
 nCPUS       = 8
@@ -47,7 +49,7 @@ runBatch    = False
 #Optional computing account when running on HTCondor, default is group_u_FCC.local_gen
 #compGroup = "group_u_FCC.local_gen"
 
-#USER DEFINED CODE
+##-------- USER DEFINED CODE --------------------
 # For costum displaced vertex selection, apply selection on the DVs with invariant mass higher than 1 GeV and distance from PV to DV less than 2000 mm, but longer than 4 mm
 # and count the number of DVs that fulfill this selection
 ROOT.gInterpreter.Declare("""
@@ -60,7 +62,7 @@ int filter_n_DVs(ROOT::VecOps::RVec<double> distanceDV, ROOT::VecOps::RVec<doubl
     return result;
 }
 """)
-#END USER DEFINED CODE
+##-------- END USER DEFINED CODE -----------------
 
 #Mandatory: RDFanalysis class where the use defines the operations on the TTree
 class RDFanalysis():

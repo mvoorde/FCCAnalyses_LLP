@@ -185,7 +185,7 @@ get_trackCov( edm4hep::TrackState &  atrack) {
 // Following code is used in the Exotic Higgs Decays to LLPs analysis to find DVs with the SV finder of LCFI+
 
 // function to merge vertices if the distance between them are less than 10*error on the position, or if they are within 1 mm from each other
-ROOT::VecOps::RVec<FCCAnalysesVertex> mergeVertices ( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices_in ) {
+ROOT::VecOps::RVec<FCCAnalysesVertex> mergeVertices ( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices_in, const ROOT::VecOps::RVec<edm4hep::TrackState>& alltracks ) {
   ROOT::VecOps::RVec<FCCAnalysesVertex> result;
   ROOT::VecOps::RVec<FCCAnalysesVertex> merged_vertices;
   int n = vertices_in.size();
@@ -208,17 +208,19 @@ ROOT::VecOps::RVec<FCCAnalysesVertex> mergeVertices ( ROOT::VecOps::RVec<FCCAnal
 
       if (distance < threshold || distance < 1){
         ROOT::VecOps::RVec<edm4hep::TrackState> tracks;
+        ROOT::VecOps::RVec<int> tracks_indices_i = ivtx.reco_ind;
+        ROOT::VecOps::RVec<int> tracks_indices_j = jvtx.reco_ind;
 
-        for (edm4hep::TrackState track_i : ivtx.tracks) {
-          tracks.push_back(track_i);
+        for (int k = 0; k < tracks_indices_i.size(); k++) {
+          tracks.push_back(alltracks[tracks_indices_i.at(k)]);
         }
 
-        for (edm4hep::TrackState track_j : jvtx.tracks) {
-          tracks.push_back(track_j);
+         for (int k = 0; k < tracks_indices_j.size(); k++) {
+          tracks.push_back(alltracks[tracks_indices_j.at(k)]);
         }
 
         // get the associated tracks to each vertex, combine and do a refit
-        FCCAnalysesVertex mergedVertex = VertexFitterSimple::VertexFitter_Tk(2, tracks);
+        FCCAnalysesVertex mergedVertex = VertexFitterSimple::VertexFitter_Tk(2, tracks, alltracks);
 
         merged_vertices.push_back(mergedVertex);
 
@@ -229,7 +231,7 @@ ROOT::VecOps::RVec<FCCAnalysesVertex> mergeVertices ( ROOT::VecOps::RVec<FCCAnal
         }
 
         //recursive process, repeat until vertices that all have distance > threshold are found
-        result = FCCAnalyses::VertexingUtils::mergeVertices(merged_vertices);
+        result = FCCAnalyses::VertexingUtils::mergeVertices(merged_vertices, alltracks);
         
         return result;
       }

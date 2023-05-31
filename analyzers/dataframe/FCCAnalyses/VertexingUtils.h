@@ -35,7 +35,6 @@ namespace VertexingUtils{
     ROOT::VecOps::RVec< TVector3 >  updated_track_momentum_at_vertex;
     ROOT::VecOps::RVec< TVectorD >  updated_track_parameters;
     ROOT::VecOps::RVec<float> final_track_phases;
-    ROOT::VecOps::RVec<edm4hep::TrackState> tracks;   // added to keep track of the tracks that are associated to each vertex, used in SV finder from LCFI+ to merge vertices
   };
 
   /// Structure to keep useful information that is related to the V0
@@ -77,7 +76,7 @@ namespace VertexingUtils{
   int get_Nvertex( ROOT::VecOps::RVec<FCCAnalysesVertex> TheVertexColl );
 
   /// Merge vertices that are within 10*error of position or 1 mm, of each other
-  ROOT::VecOps::RVec<FCCAnalysesVertex> mergeVertices ( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices_in );
+  ROOT::VecOps::RVec<FCCAnalysesVertex> mergeVertices ( ROOT::VecOps::RVec<FCCAnalysesVertex> vertices_in, const ROOT::VecOps::RVec<edm4hep::TrackState>& alltracks );
 
   /// selection of tracks based on the transverse momentum pT
   struct sel_pt_tracks {
