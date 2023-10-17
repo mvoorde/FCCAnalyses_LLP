@@ -7,8 +7,8 @@ processList = {
 
         #privately-produced signals
         # 'exoticHiggs_scalar_ms20GeV_sine-5':{},
-        'exoticHiggs_scalar_ms20GeV_sine-6':{},
-        # 'exoticHiggs_scalar_ms20GeV_sine-7':{},
+        # 'exoticHiggs_scalar_ms20GeV_sine-6':{},
+        'exoticHiggs_scalar_ms20GeV_sine-7':{},
         # 'exoticHiggs_scalar_ms60GeV_sine-5':{},
         # 'exoticHiggs_scalar_ms60GeV_sine-6':{},
         # 'exoticHiggs_scalar_ms60GeV_sine-7':{},
@@ -120,22 +120,22 @@ class RDFanalysis():
             .Define("Reco_seltracks_DVs_Lxy","VertexingUtils::get_dxy_SV(DV_evt_seltracks, PrimaryVertexObject)")
             .Define("Reco_seltracks_DVs_Lxyz","VertexingUtils::get_d3d_SV(DV_evt_seltracks, PrimaryVertexObject)")
             
-            # merge vertices with position within 10*error-of-position, get the tracks from the merged vertices and refit
-            .Define('merged_DVs', 'VertexingUtils::mergeVertices(DV_evt_seltracks)')
-            # number of merged DVs
-            .Define("merged_DVs_n", "VertexingUtils::get_n_SV(merged_DVs)")
-            # number of tracks from the merged DVs
-            .Define('n_trks_merged_DVs', 'VertexingUtils::get_VertexNtrk(merged_DVs)')
-            # invariant mass at the merged DVs
-            .Define('invMass_merged_DVs', 'VertexingUtils::get_invM(merged_DVs)')
+            # # merge vertices with position within 10*error-of-position, get the tracks from the merged vertices and refit
+            # .Define('merged_DVs', 'VertexingUtils::mergeVertices(DV_evt_seltracks)')
+            # # number of merged DVs
+            # .Define("merged_DVs_n", "VertexingUtils::get_n_SV(merged_DVs)")
+            # # number of tracks from the merged DVs
+            # .Define('n_trks_merged_DVs', 'VertexingUtils::get_VertexNtrk(merged_DVs)')
+            # # invariant mass at the merged DVs
+            # .Define('invMass_merged_DVs', 'VertexingUtils::get_invM(merged_DVs)')
 
-            # get the chi2 distributions of the merged DVs
-            .Define("merged_DVs_chi2",    "VertexingUtils::get_chi2_SV(merged_DVs)")
-            .Define("merged_DVs_normchi2","VertexingUtils::get_norm_chi2_SV(merged_DVs)") # DV chi2 (normalised)
+            # # get the chi2 distributions of the merged DVs
+            # .Define("merged_DVs_chi2",    "VertexingUtils::get_chi2_SV(merged_DVs)")
+            # .Define("merged_DVs_normchi2","VertexingUtils::get_norm_chi2_SV(merged_DVs)") # DV chi2 (normalised)
 
-            # get the decay radius of all the merged DVs
-            .Define("Reco_DVs_merged_Lxy","VertexingUtils::get_dxy_SV(merged_DVs, PrimaryVertexObject)")
-            .Define("Reco_DVs_merged_Lxyz","VertexingUtils::get_d3d_SV(merged_DVs, PrimaryVertexObject)")
+            # # get the decay radius of all the merged DVs
+            # .Define("Reco_DVs_merged_Lxy","VertexingUtils::get_dxy_SV(merged_DVs, PrimaryVertexObject)")
+            # .Define("Reco_DVs_merged_Lxyz","VertexingUtils::get_d3d_SV(merged_DVs, PrimaryVertexObject)")
 
             # Reconstructed electrons and muons
 
@@ -184,7 +184,7 @@ class RDFanalysis():
 
             # Number of DVs with distance and invariant mass selection applied
             .Define("filter_n_DVs_seltracks", "filter_n_DVs(Reco_seltracks_DVs_Lxyz, invMass_seltracks_DVs)")
-            .Define("filter_n_DVs_merge", "filter_n_DVs(Reco_DVs_merged_Lxyz, invMass_merged_DVs)")
+            #.Define("filter_n_DVs_merge", "filter_n_DVs(Reco_DVs_merged_Lxyz, invMass_merged_DVs)")
 
         )
         return df2
@@ -205,13 +205,13 @@ class RDFanalysis():
             "Reco_seltracks_DVs_Lxy",
             "Reco_seltracks_DVs_Lxyz",
 
-            "merged_DVs_n",
-            'n_trks_merged_DVs',
-            'invMass_merged_DVs',
-            "merged_DVs_chi2",
-            "merged_DVs_normchi2",
-            "Reco_DVs_merged_Lxy",
-            "Reco_DVs_merged_Lxyz",
+            # "merged_DVs_n",
+            # 'n_trks_merged_DVs',
+            # 'invMass_merged_DVs',
+            # "merged_DVs_chi2",
+            # "merged_DVs_normchi2",
+            # "Reco_DVs_merged_Lxy",
+            # "Reco_DVs_merged_Lxyz",
 
             'n_RecoElectrons',
             "RecoElectron_e",
@@ -233,6 +233,6 @@ class RDFanalysis():
             "Reco_mumu_invMass",
 
             "filter_n_DVs_seltracks",
-            "filter_n_DVs_merge",
+            #"filter_n_DVs_merge",
         ]
         return branchList

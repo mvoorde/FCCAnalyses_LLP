@@ -144,11 +144,11 @@ def runPlots(var,sel,param,hsignal,hbackgrounds,extralab,splitLeg):
 
 
     lt = "FCCAnalyses: FCC-hh Simulation (Delphes)"
-    rt = "#sqrt{{s}} = {:.1f} TeV,   L = {:.0f} ab^{{-1}}".format(param.energy,intLumiab)
+    rt = "#sqrt{{s}} = {:.1f} TeV,   L = {:.1f} ab^{{-1}}".format(param.energy,intLumiab)
 
     if 'ee' in param.collider:
         lt = "FCCAnalyses: FCC-ee Simulation (Delphes)"
-        rt = "#sqrt{{s}} = {:.1f} GeV,   L = {:.0f} ab^{{-1}}".format(param.energy,intLumiab)
+        rt = "#sqrt{{s}} = {:.1f} GeV,   L = {:.1f} ab^{{-1}}".format(param.energy,intLumiab)
 
     customLabel=""
     try:
@@ -202,8 +202,17 @@ def drawStack(name, ylabel, legend, leftText, rightText, formats, directory, log
     next(iterh)
 
     unit = 'GeV'
+
+    if 'mm' in str(histos[0].GetXaxis().GetTitle()):
+        unit = 'mm'
+
+
     if 'TeV' in str(histos[0].GetXaxis().GetTitle()):
         unit = 'TeV'
+
+
+    if '[ns]' in str(histos[0].GetXaxis().GetTitle()):
+        unit = 'ns'
 
     if unit in str(histos[0].GetXaxis().GetTitle()):
         bwidth=sumhistos.GetBinWidth(1)
@@ -270,6 +279,9 @@ def drawStack(name, ylabel, legend, leftText, rightText, formats, directory, log
 
     # finally add signal on top
     for l in range(nsig):
+      lastbin = histos[l].GetNbinsX()
+      overflowBin = lastbin + 1
+      histos[l].SetBinContent(lastbin, histos[l].GetBinContent(lastbin) + histos[l].GetBinContent(overflowBin))
       histos[l].SetLineWidth(3)
       histos[l].SetLineColor(colors[l])
       if stacksig:
@@ -298,8 +310,8 @@ def drawStack(name, ylabel, legend, leftText, rightText, formats, directory, log
 
     lowY=0.
     if logY:
-        highY=200.*maxh/ROOT.gPad.GetUymax()
-        threshold=0.5
+        highY=50000.*maxh/ROOT.gPad.GetUymax()
+        threshold=0.002
         if (not stacksig) and nbkg==0:
             bin_width=hStackSig.GetXaxis().GetBinWidth(1)
         else:

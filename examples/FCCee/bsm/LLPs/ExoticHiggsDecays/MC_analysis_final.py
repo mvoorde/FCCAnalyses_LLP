@@ -1,12 +1,12 @@
 #Input directory where the files produced at the stage1 level are
-#inputDir  = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/MC_output_stage1/"
-inputDir = "MC_output_stage1/"
+inputDir  = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/MC_output_stage1/"
+#inputDir = "MC_output_stage1/"
 
 #Output directory where the files produced at the final-selection level are
 outputDir  = "MC_output_finalSel/"
 
 #Integrated luminosity for scaling number of events (required only if setting doScale to true)
-#intLumi = 5e6 #pb^-1
+#intLumi = 7.2e6 #pb^-1
 
 #Scale event yields by intLumi and cross section (optional)
 #doScale = True
@@ -19,11 +19,11 @@ processList = {
 
         #privately-produced signals
         'exoticHiggs_scalar_ms20GeV_sine-5':{},
-        # 'exoticHiggs_scalar_ms20GeV_sine-6':{},
-        # 'exoticHiggs_scalar_ms20GeV_sine-7':{},
-        # 'exoticHiggs_scalar_ms60GeV_sine-5':{},
-        # 'exoticHiggs_scalar_ms60GeV_sine-6':{},
-        # 'exoticHiggs_scalar_ms60GeV_sine-7':{},
+        'exoticHiggs_scalar_ms20GeV_sine-6':{},
+        'exoticHiggs_scalar_ms20GeV_sine-7':{},
+        'exoticHiggs_scalar_ms60GeV_sine-5':{},
+        'exoticHiggs_scalar_ms60GeV_sine-6':{},
+        'exoticHiggs_scalar_ms60GeV_sine-7':{},
 
 }
 
@@ -43,12 +43,12 @@ procDict = "FCCee_procDict_spring2021_IDEA.json"
 
 #Add MySample_p8_ee_ZH_ecm240 as it is not an offical process
 procDictAdd={
-    'exoticHiggs_scalar_ms20GeV_sine-5': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 4.434e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
-    'exoticHiggs_scalar_ms20GeV_sine-6': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 4.434e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
-    'exoticHiggs_scalar_ms20GeV_sine-7': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 4.434e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
-    'exoticHiggs_scalar_ms60GeV_sine-5': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 1.311e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
-    'exoticHiggs_scalar_ms60GeV_sine-6': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 1.311e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
-    'exoticHiggs_scalar_ms60GeV_sine-7': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 1.311e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    'exoticHiggs_scalar_ms20GeV_sine-5': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 8.858e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    'exoticHiggs_scalar_ms20GeV_sine-6': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 8.858e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    'exoticHiggs_scalar_ms20GeV_sine-7': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 8.858e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    'exoticHiggs_scalar_ms60GeV_sine-5': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 2.618e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    'exoticHiggs_scalar_ms60GeV_sine-6': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 2.618e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    'exoticHiggs_scalar_ms60GeV_sine-7': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 2.618e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
 }
 
 #Number of CPUs to use
@@ -60,6 +60,7 @@ doTree = False
 ###Dictionnay of the list of cuts. The key is the name of the selection that will be added to the output file
 cutList = {
     "selNone": "n_GenZ > -1",
+    #"selDistance": "((4 < decayLengthsHS[0]) && (decayLengthsHS[0] < 2000)) || ((4 < decayLengthsHS[1]) && (decayLengthsHS[1] < 2000))",
     
 }
 
@@ -77,14 +78,14 @@ histoList = {
     'n_GenZ':                           {"name":"n_GenZ",                         "title":"Number of generated Z bosons",         "bin":5,"xmin":-0.5 ,"xmax":4.5},
     'n_GenHiggs':                       {"name":"n_GenHiggs",                     "title":"Number of generated Higgs bosons",      "bin":5,"xmin":-0.5 ,"xmax":4.5},
     'n_Genb':                           {"name":"n_Genb",                         "title":"Number of generated b quarks",          "bin":5,"xmin":-0.5 ,"xmax":4.5},
-    'n_GenHS':                          {"name":"n_GenHS",                        "title":"Number of generated dark scalars",      "bin":5,"xmin":-0.5 ,"xmax":4.5},
+    'n_GenHS':                          {"name":"n_GenHS",                        "title":"Number of generated scalars",      "bin":10,"xmin":-0.5 ,"xmax":9.5},
 
-    'AllGenHS_mass':                    {"name":'AllGenHS_mass',                  "title":"Generated dark scalars mass [GeV]",     "bin":50,"xmin":-0.5 ,"xmax":49.5},
-    'AllGenHS_e':                       {"name":'AllGenHS_e',                     "title":"Generated dark scalars energy [GeV]",   "bin":100,"xmin":-0.5 ,"xmax":99.5},
+    'AllGenHS_mass':                    {"name":'AllGenHS_mass',                  "title":"Generated scalars mass [GeV]",     "bin":80,"xmin":-0.5 ,"xmax":79.5},
+    'AllGenHS_e':                       {"name":'AllGenHS_e',                     "title":"Generated scalars energy [GeV]",   "bin":100,"xmin":-0.5 ,"xmax":99.5},
 
     'LxyHS':                            {"name":'LxyHS',                         "title":"Genenrated transverse decay length [mm]",       "bin":100,"xmin":0 ,"xmax":1000},
-    'decayLengthsHS':                   {"name":'decayLengthsHS',                "title":"Generated decay length [mm]",                   "bin":100,"xmin":0 ,"xmax":10000},
-    'lifetimeHS':                       {"name":'lifetimeHS',                    "title":"Generated time distribution t [ns]",            "bin":100,"xmin":0 ,"xmax":20},
-    'lifetimeHSLAB':                    {"name":'lifetimeHSLAB',                "title":"Generated time distribution in LAB frame [ns]", "bin":100,"xmin":0 ,"xmax":20},
+    'decayLengthsHS':                   {"name":'decayLengthsHS',                "title":"Generated decay length [mm]",                   "bin":100,"xmin":0 ,"xmax":2000},
+    'lifetimeHS':                       {"name":'lifetimeHS',                    "title":"Generated time distribution t [ns]",            "bin":100,"xmin":0 ,"xmax":10},
+    'lifetimeHSLAB':                    {"name":'lifetimeHSLAB',                "title":"Generated time distribution in LAB frame [ns]", "bin":100,"xmin":0 ,"xmax":10},
 
 }

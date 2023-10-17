@@ -34,7 +34,7 @@ inputDir = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/output
 #Optional: output directory, default is local dir
 #outputDir = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/Reco_output_stage1/"
 #outputDirEos = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/Reco_output_stage1/"
-outputDir = "Vertex_output_stage1_230531/"
+outputDir = "Vertex_output_stage1_seltracksOnlyd0_230612/"
 
 #Optional: ncpus, default is 4
 nCPUS       = 8
@@ -241,6 +241,18 @@ ROOT::VecOps::RVec<float> get_acceptance_trueparticles_new(ROOT::VecOps::RVec<fl
 }
 """)
 
+# Count number of true decays in the decay volume
+ROOT.gInterpreter.Declare("""
+int get_n_trueparticles_vol(ROOT::VecOps::RVec<float> decaylengths_scalar) {
+    int n_scalar_in_ID = 0;
+    for (size_t i = 0; i < decaylengths_scalar.size(); ++i) {
+        if (decaylengths_scalar.at(i) > 4 && decaylengths_scalar.at(i) < 2000) 
+            n_scalar_in_ID += 1;
+    }
+    return n_scalar_in_ID;
+}
+""")
+
 # Get the unique set of stable particles
 ROOT.gInterpreter.Declare("""
 ROOT::VecOps::RVec<int> get_list_of_FSparticles_indices(int index, ROOT::VecOps::RVec<edm4hep::MCParticleData> particle_collection, ROOT::VecOps::RVec<int> indices_collection) {
@@ -336,6 +348,78 @@ ROOT::VecOps::RVec<FCCAnalyses::VertexingUtils::FCCAnalysesVertex> get_all_DVs( 
 }
 """)
 
+# get the MC particles from the indices
+ROOT.gInterpreter.Declare("""
+ROOT::VecOps::RVec<edm4hep::MCParticleData> get_MCparticles(ROOT::VecOps::RVec<int> list_of_indices,  ROOT::VecOps::RVec<edm4hep::MCParticleData> in) {
+    ROOT::VecOps::RVec<edm4hep::MCParticleData> result;
+    for(size_t i = 0; i < list_of_indices.size(); ++i) {
+        result.push_back(FCCAnalyses::MCParticle::sel_byIndex(list_of_indices[i], in));
+    }
+    return result;
+}
+""")
+
+# get the sum of the invariant mass from the charged MC particles
+ROOT.gInterpreter.Declare("""
+double sum_charged_InvMass(ROOT::VecOps::RVec<edm4hep::MCParticleData> mc_in) {
+    double result = 0.;
+    ROOT::VecOps::RVec<float> all_charges = FCCAnalyses::MCParticle::get_charge(mc_in);
+    ROOT::VecOps::RVec<TLorentzVector> all_InvMasses = FCCAnalyses::MCParticle::get_tlv(mc_in);
+
+    int i = 0;
+    for (auto & c: all_charges) {
+        if (c != 0) {
+            result += all_InvMasses.at(i).M();
+        }
+        i++;
+    }
+    return result;
+}
+""")
+
+# seperate stable particles wrt their vertex position
+ROOT.gInterpreter.Declare("""
+ROOT::VecOps::RVec<int> get_scalar_FS_particles(ROOT::VecOps::RVec<int> list_of_scalar_decay_indices,
+                                                ROOT::VecOps::RVec<edm4hep::MCParticleData> in,
+                                                ROOT::VecOps::RVec<edm4hep::MCParticleData> scalar_MC) {
+    ROOT::VecOps::RVec<int> result;
+    ROOT::VecOps::RVec<edm4hep::MCParticleData> scalar_decays_MC = get_MCparticles(list_of_scalar_decay_indices, in);
+    ROOT::VecOps::RVec<edm4hep::Vector3d> scalar_decays_vertices = FCCAnalyses::MCParticle::get_vertex(scalar_decays_MC);
+    ROOT::VecOps::RVec<edm4hep::Vector3d> scalar_vertices = FCCAnalyses::MCParticle::get_vertex(scalar_MC);
+
+    for(size_t i = 0; i < list_of_scalar_decay_indices.size(); ++i) {
+        if (scalar_decays_vertices[i].x == scalar_vertices[i].x && scalar_decays_vertices[i].y == scalar_vertices[i].y && scalar_decays_vertices[i].z == scalar_vertices[i].z) {
+            result.push_back(list_of_scalar_decay_indices[i]);
+        }
+    }
+
+    return result;
+}
+""")
+
+# get the endpoint like they do but modified to get it for only one MC particle
+ROOT.gInterpreter.Declare("""
+ROOT::VecOps::RVec<edm4hep::Vector3d> get_endPoint(ROOT::VecOps::RVec<edm4hep::MCParticleData> in, ROOT::VecOps::RVec<int> ind, ROOT::VecOps::RVec<edm4hep::MCParticleData> MC_particle)  {
+        // ( carefull : if a Bs has oscillated into a Bsbar, this returns the production vertex of the Bsbar )
+  ROOT::VecOps::RVec<edm4hep::Vector3d> result;
+  for (auto & p: MC_particle) {
+    edm4hep::Vector3d vertex(1e12, 1e12, 1e12);  // a default value for stable particles
+    int db = p.daughters_begin ;
+    int de = p.daughters_end;
+    if (db != de) { // particle unstable
+        int d1 = ind[db] ;   // first daughter
+        if ( d1 >= 0 && d1 < in.size() ) {
+            vertex = in.at(d1).vertex ;
+        }
+    }
+    result.push_back(vertex);
+  }
+  return result;
+}
+""")
+
+
+
 ##-------- END USER DEFINED CODE -----------------
 
 #Mandatory: RDFanalysis class where the use defines the operations on the TTree
@@ -385,7 +469,7 @@ class RDFanalysis():
             # select tracks with pT > 1 GeV
             .Define('sel_tracks_pt', 'VertexingUtils::sel_pt_tracks(1)(EFlowTrack_1)')
             # select tracks with |d0 |> 2 mm
-            .Define('sel_tracks', 'VertexingUtils::sel_d0_tracks(2)(sel_tracks_pt)')
+            .Define('sel_tracks', 'VertexingUtils::sel_d0_tracks(2)(EFlowTrack_1)')        #sel_tracks_p
             # find the DVs
             .Define("DV_evt_seltracks", "VertexFinderLCFIPlus::get_SV_event(sel_tracks, EFlowTrack_1, PrimaryVertexObject, true, 9., 40., 5.)")
             # number of DVs
@@ -415,6 +499,29 @@ class RDFanalysis():
             .Define('scalar1_decays_indices', 'get_list_of_FSparticles_indices(HS1_to_bb_indices[0], Particle, Particle1)')
             .Define('scalar2_decays_indices', 'get_list_of_FSparticles_indices(HS2_to_bb_indices[0], Particle, Particle1)')
 
+            .Define('scalar1_decays_MC', 'get_MCparticles(scalar1_decays_indices, Particle)')
+            .Define('scalar2_decays_MC', 'get_MCparticles(scalar2_decays_indices, Particle)')
+
+            .Define('scalar1_decays_MC_charged_InvMass', 'sum_charged_InvMass(scalar1_decays_MC)')
+            .Define('scalar2_decays_MC_charged_InvMass', 'sum_charged_InvMass(scalar2_decays_MC)')
+
+            .Define('scalar1_decays_MC_vertices', 'MCParticle::get_vertex(scalar1_decays_MC)')
+            .Define('scalar2_decays_MC_vertices', 'MCParticle::get_vertex(scalar2_decays_MC)')
+
+            # .Define('scalar1_decays_MC_endPoints', 'MCParticle::get_endPoint(scalar1_decays_MC, Particle1)')
+            # .Define('scalar2_decays_MC_endPoints', 'MCParticle::get_endPoint(scalar2_decays_MC, Particle1)')
+
+            # .Define('scalar1_decays_MC_vertex_x', 'MCParticle::get_vertex_x(scalar1_decays_MC)')
+            # .Define('scalar1_decays_MC_vertex_y', 'MCParticle::get_vertex_y(scalar1_decays_MC)')
+            # .Define('scalar1_decays_MC_vertex_z', 'MCParticle::get_vertex_z(scalar1_decays_MC)')
+
+            # .Define('scalar2_decays_MC_vertex_x', 'MCParticle::get_vertex_x(scalar2_decays_MC)')
+            # .Define('scalar2_decays_MC_vertex_y', 'MCParticle::get_vertex_y(scalar2_decays_MC)')
+            # .Define('scalar2_decays_MC_vertex_z', 'MCParticle::get_vertex_z(scalar2_decays_MC)')
+
+            .Define('s1', 'myUtils::selMC_leg(0) (HS1_to_bb_indices, Particle)')
+            .Define('s2', 'myUtils::selMC_leg(0) (HS2_to_bb_indices, Particle)')
+
             # get the b quarks, picking the first daughter from the list of decay particles from hs
             .Define('b1_s1', 'myUtils::selMC_leg(1) (HS1_to_bb_indices, Particle)')
             .Define('b1_s2', 'myUtils::selMC_leg(1) (HS2_to_bb_indices, Particle)')
@@ -443,20 +550,28 @@ class RDFanalysis():
             .Define('HS_vertex_z', 'MCParticle::get_vertex_z(GenHS_PID)')
 
             # # get the vertex position for the first group of b quarks
-            .Define('b1_vertex_x', 'MCParticle::get_vertex_x(b1_s1)')
-            .Define('b1_vertex_y', 'MCParticle::get_vertex_y(b1_s1)')
-            .Define('b1_vertex_z', 'MCParticle::get_vertex_z(b1_s1)')
+            .Define('s1b1_vertex_x', 'MCParticle::get_vertex_x(b1_s1)')
+            .Define('s1b1_vertex_y', 'MCParticle::get_vertex_y(b1_s1)')
+            .Define('s1b1_vertex_z', 'MCParticle::get_vertex_z(b1_s1)')
+
+            .Define('s1b2_vertex_x', 'MCParticle::get_vertex_x(b2_s1)')
+            .Define('s1b2_vertex_y', 'MCParticle::get_vertex_y(b2_s1)')
+            .Define('s1b2_vertex_z', 'MCParticle::get_vertex_z(b2_s1)')
 
             # # get the vertex position for the second group of b quarks
-            .Define('b2_vertex_x', 'MCParticle::get_vertex_x(b1_s2)')
-            .Define('b2_vertex_y', 'MCParticle::get_vertex_y(b1_s2)')
-            .Define('b2_vertex_z', 'MCParticle::get_vertex_z(b1_s2)')
+            .Define('s2b1_vertex_x', 'MCParticle::get_vertex_x(b1_s2)')
+            .Define('s2b1_vertex_y', 'MCParticle::get_vertex_y(b1_s2)')
+            .Define('s2b1_vertex_z', 'MCParticle::get_vertex_z(b1_s2)')
+
+            .Define('s2b2_vertex_x', 'MCParticle::get_vertex_x(b2_s2)')
+            .Define('s2b2_vertex_y', 'MCParticle::get_vertex_y(b2_s2)')
+            .Define('s2b2_vertex_z', 'MCParticle::get_vertex_z(b2_s2)')
 
             # get the decay length of HS 1
-            .Define('decayLengthHS1', 'return sqrt((b1_vertex_x - HS_vertex_x.at(0))*(b1_vertex_x - HS_vertex_x.at(0)) + (b1_vertex_y - HS_vertex_y.at(0))*(b1_vertex_y - HS_vertex_y.at(0)) + (b1_vertex_z - HS_vertex_z.at(0))*(b1_vertex_z - HS_vertex_z.at(0)))')
+            .Define('decayLengthHS1', 'return sqrt((s1b1_vertex_x - HS_vertex_x.at(0))*(s1b1_vertex_x - HS_vertex_x.at(0)) + (s1b1_vertex_y - HS_vertex_y.at(0))*(s1b1_vertex_y - HS_vertex_y.at(0)) + (s1b1_vertex_z - HS_vertex_z.at(0))*(s1b1_vertex_z - HS_vertex_z.at(0)))')
 
             # get the decay length of HS 2
-            .Define('decayLengthHS2', 'return sqrt((b2_vertex_x - HS_vertex_x.at(1))*(b2_vertex_x - HS_vertex_x.at(1)) + (b2_vertex_y - HS_vertex_y.at(1))*(b2_vertex_y - HS_vertex_y.at(1)) + (b2_vertex_z - HS_vertex_z.at(1))*(b2_vertex_z - HS_vertex_z.at(1)))')
+            .Define('decayLengthHS2', 'return sqrt((s2b1_vertex_x - HS_vertex_x.at(1))*(s2b1_vertex_x - HS_vertex_x.at(1)) + (s2b1_vertex_y - HS_vertex_y.at(1))*(s2b1_vertex_y - HS_vertex_y.at(1)) + (s2b1_vertex_z - HS_vertex_z.at(1))*(s2b1_vertex_z - HS_vertex_z.at(1)))')
 
             # get decay length of both scalars in a vector for each event
             .Define('decayLengthsHS', 'myUtils::get_both_scalars(decayLengthHS1, decayLengthHS2)')
@@ -465,9 +580,42 @@ class RDFanalysis():
             .Define('acceptance_true_scalars', 'get_acceptance_trueparticles(decayLengthsHS)')
             .Define('acceptance_true_scalars_new', 'get_acceptance_trueparticles_new(decayLengthsHS)')
 
+            .Define('n_true_in_ID', 'get_n_trueparticles_vol(decayLengthsHS)')
+
+
+            .Define('scalar1_position_decays_indices', 'get_scalar_FS_particles(scalar1_decays_indices, Particle, b1_s1)')
+            .Define('scalar2_position_decays_indices', 'get_scalar_FS_particles(scalar2_decays_indices, Particle, b2_s2)')
+
+            # # Truthmatch to the FS particles produced at the scalar decay position only
+            # .Define('truthmatchedDVs_s1_position', 'truthmatchDVs_vertex(DV_evt_seltracks, ReconstructedParticles, scalar1_position_decays_indices, RP_MC_index, EFlowTrack_1)')
+            # .Define('truthmatchedDVs_s2_position', 'truthmatchDVs_vertex(DV_evt_seltracks, ReconstructedParticles, scalar2_position_decays_indices, RP_MC_index, EFlowTrack_1)')
+            # .Define('truthmatchedDVs_position', 'get_all_DVs(truthmatchedDVs_s1_position, truthmatchedDVs_s2_position)')
+
+            # # number of truthmatched DVs
+            # .Define('n_truthmatchedDVs_position', 'truthmatchedDVs_position.size()')
+            
+            # # Get the distance between the truthmatched DVs and the true scalar decays
+            # .Define('distance_s1_truthmatchedDVs_position', 'VertexingUtils::get_d3d_SV_obj(truthmatchedDVs_s1_position, bquarks_s1_vertices.at(0))')
+            # .Define('distance_s2_truthmatchedDVs_position', 'VertexingUtils::get_d3d_SV_obj(truthmatchedDVs_s2_position, bquarks_s2_vertices.at(0))')
+            
+            # # Get the purity of all DVs
+            # .Define('truthmatch_purity_position', 'truthmatchDV_purity_all_weighted(DV_evt_seltracks, ReconstructedParticles, scalar1_position_decays_indices, scalar2_position_decays_indices, RP_MC_index, EFlowTrack_1)')
+            
+            # # Get the fake rate
+            # .Define('fake_rate_position', 'get_fake_rate(truthmatchedDVs_s1_position, truthmatchedDVs_s2_position, DV_evt_seltracks)')
+
+            # # Get the reconstruction efficiency for each scalar
+            # .Define('rec_eff_position_s1', 'get_reconstruction_efficiency(truthmatchedDVs_s1_position, decayLengthHS1.at(0))')
+            # .Define('rec_eff_position_s2', 'get_reconstruction_efficiency(truthmatchedDVs_s2_position, decayLengthHS2.at(0))')
+
+            # # Get the total reconstruction efficiency, i.e the reconstruction efficiency for both scalars
+            # .Define('rec_eff_position_total', 'get_vector(rec_eff_position_s1, rec_eff_position_s2)')
+
+
+
             # Truthmatch to the scalars seperatly
-            .Define('truthmatchedDVs_nosel_s1', 'truthmatchDVs_vertex(DV_no_sel, ReconstructedParticles, scalar1_decays_indices, RP_MC_index, EFlowTrack_1)')
-            .Define('truthmatchedDVs_nosel_s2', 'truthmatchDVs_vertex(DV_no_sel, ReconstructedParticles, scalar2_decays_indices, RP_MC_index, EFlowTrack_1)')
+            .Define('truthmatchedDVs_nosel_s1', 'truthmatchDVs_vertex(DV_no_sel, ReconstructedParticles, scalar1_position_decays_indices, RP_MC_index, EFlowTrack_1)')
+            .Define('truthmatchedDVs_nosel_s2', 'truthmatchDVs_vertex(DV_no_sel, ReconstructedParticles, scalar2_position_decays_indices, RP_MC_index, EFlowTrack_1)')
             .Define('truthmatchedDVs_nosel', 'get_all_DVs(truthmatchedDVs_nosel_s1, truthmatchedDVs_nosel_s2)')
 
             # number of truthmatched DVs
@@ -480,10 +628,10 @@ class RDFanalysis():
             .Define('distance_s2_truthmatchedDVs_nosel', 'VertexingUtils::get_d3d_SV_obj(truthmatchedDVs_nosel_s2, bquarks_s2_vertices.at(0))')
 
             # Get the absolute number of matched tracks of all DVs
-            .Define('n_matchedDVtracks_nosel', 'n_matchedDVtracks_all(scalar1_decays_indices, scalar2_decays_indices, DV_no_sel, ReconstructedParticles, RP_MC_index)')
+            .Define('n_matchedDVtracks_nosel', 'n_matchedDVtracks_all(scalar1_position_decays_indices, scalar2_position_decays_indices, DV_no_sel, ReconstructedParticles, RP_MC_index)')
             
             # Get the purity of all DVs
-            .Define('truthmatch_purity_nosel', 'truthmatchDV_purity_all_weighted(DV_no_sel, ReconstructedParticles, scalar1_decays_indices, scalar2_decays_indices, RP_MC_index, EFlowTrack_1)')
+            .Define('truthmatch_purity_nosel', 'truthmatchDV_purity_all_weighted(DV_no_sel, ReconstructedParticles, scalar1_position_decays_indices, scalar2_position_decays_indices, RP_MC_index, EFlowTrack_1)')
             
             # Get the fake rate
             .Define('fake_rate_nosel', 'get_fake_rate(truthmatchedDVs_nosel_s1, truthmatchedDVs_nosel_s2, DV_no_sel)')
@@ -497,8 +645,8 @@ class RDFanalysis():
 
             
             # Truthmatch to the scalars seperatly
-            .Define('truthmatchedDVs_seltracks_s1', 'truthmatchDVs_vertex(DV_evt_seltracks, ReconstructedParticles, scalar1_decays_indices, RP_MC_index, EFlowTrack_1)')
-            .Define('truthmatchedDVs_seltracks_s2', 'truthmatchDVs_vertex(DV_evt_seltracks, ReconstructedParticles, scalar2_decays_indices, RP_MC_index, EFlowTrack_1)')
+            .Define('truthmatchedDVs_seltracks_s1', 'truthmatchDVs_vertex(DV_evt_seltracks, ReconstructedParticles, scalar1_position_decays_indices, RP_MC_index, EFlowTrack_1)')
+            .Define('truthmatchedDVs_seltracks_s2', 'truthmatchDVs_vertex(DV_evt_seltracks, ReconstructedParticles, scalar2_position_decays_indices, RP_MC_index, EFlowTrack_1)')
             .Define('truthmatchedDVs_seltracks', 'get_all_DVs(truthmatchedDVs_seltracks_s1, truthmatchedDVs_seltracks_s2)')
 
             # number of truthmatched DVs
@@ -511,10 +659,10 @@ class RDFanalysis():
             .Define('distance_s2_truthmatchedDVs_seltracks', 'VertexingUtils::get_d3d_SV_obj(truthmatchedDVs_seltracks_s2, bquarks_s2_vertices.at(0))')
 
             # Get the absolute number of matched tracks of all DVs
-            .Define('n_matchedDVtracks_seltracks', 'n_matchedDVtracks_all(scalar1_decays_indices, scalar2_decays_indices, DV_evt_seltracks, ReconstructedParticles, RP_MC_index)')
+            .Define('n_matchedDVtracks_seltracks', 'n_matchedDVtracks_all(scalar1_position_decays_indices, scalar2_position_decays_indices, DV_evt_seltracks, ReconstructedParticles, RP_MC_index)')
             
             # Get the purity of all DVs
-            .Define('truthmatch_purity_seltracks', 'truthmatchDV_purity_all_weighted(DV_evt_seltracks, ReconstructedParticles, scalar1_decays_indices, scalar2_decays_indices, RP_MC_index, EFlowTrack_1)')
+            .Define('truthmatch_purity_seltracks', 'truthmatchDV_purity_all_weighted(DV_evt_seltracks, ReconstructedParticles, scalar1_position_decays_indices, scalar2_position_decays_indices, RP_MC_index, EFlowTrack_1)')
             
             # Get the fake rate
             .Define('fake_rate_seltracks', 'get_fake_rate(truthmatchedDVs_seltracks_s1, truthmatchedDVs_seltracks_s2, DV_evt_seltracks)')
@@ -529,8 +677,8 @@ class RDFanalysis():
 
 
             # Truthmatch to the scalars seperatly
-            .Define('truthmatchedDVs_merged_s1', 'truthmatchDVs_vertex(merged_DVs, ReconstructedParticles, scalar1_decays_indices, RP_MC_index, EFlowTrack_1)')
-            .Define('truthmatchedDVs_merged_s2', 'truthmatchDVs_vertex(merged_DVs, ReconstructedParticles, scalar2_decays_indices, RP_MC_index, EFlowTrack_1)')
+            .Define('truthmatchedDVs_merged_s1', 'truthmatchDVs_vertex(merged_DVs, ReconstructedParticles, scalar1_position_decays_indices, RP_MC_index, EFlowTrack_1)')
+            .Define('truthmatchedDVs_merged_s2', 'truthmatchDVs_vertex(merged_DVs, ReconstructedParticles, scalar2_position_decays_indices, RP_MC_index, EFlowTrack_1)')
             .Define('truthmatchedDVs_merged', 'get_all_DVs(truthmatchedDVs_merged_s1, truthmatchedDVs_merged_s2)')
 
             # number of truthmatched DVs
@@ -543,11 +691,11 @@ class RDFanalysis():
             .Define('distance_s2_truthmatchedDVs_merged', 'VertexingUtils::get_d3d_SV_obj(truthmatchedDVs_merged_s2, bquarks_s2_vertices.at(0))')
 
             # Get the absolute number of matched tracks of all DVs
-            .Define('n_matchedDVtracks_merged', 'n_matchedDVtracks_all(scalar1_decays_indices, scalar2_decays_indices, merged_DVs, ReconstructedParticles, RP_MC_index)')
+            .Define('n_matchedDVtracks_merged', 'n_matchedDVtracks_all(scalar1_position_decays_indices, scalar2_position_decays_indices, merged_DVs, ReconstructedParticles, RP_MC_index)')
 
             
             # Get the purity of all DVs
-            .Define('truthmatch_purity_merged', 'truthmatchDV_purity_all_weighted(merged_DVs, ReconstructedParticles, scalar1_decays_indices, scalar2_decays_indices, RP_MC_index, EFlowTrack_1)')
+            .Define('truthmatch_purity_merged', 'truthmatchDV_purity_all_weighted(merged_DVs, ReconstructedParticles, scalar1_position_decays_indices, scalar2_position_decays_indices, RP_MC_index, EFlowTrack_1)')
             
             # Get the fake rate
             .Define('fake_rate_merged', 'get_fake_rate(truthmatchedDVs_merged_s1, truthmatchedDVs_merged_s2, merged_DVs)')
@@ -566,35 +714,74 @@ class RDFanalysis():
     #Mandatory: output function, please make sure you return the branchlist as a python list
     def output():
         branchList = [
-            "n_tracks",
-            "n_RecoedPrimaryTracks",
+            # "n_tracks",
+            # "n_RecoedPrimaryTracks",
 
-            'n_nosel_DVs',
-            'invMass_nosel_DVs',
+            # 'n_nosel_DVs',
+            # 'invMass_nosel_DVs',
             'n_seltracks_DVs',
             'invMass_seltracks_DVs',
-            "merged_DVs_n",
-            'invMass_merged_DVs',
+            # "merged_DVs_n",
+            # 'invMass_merged_DVs',
 
-            'decayLengthHS1',
-            'decayLengthHS2',
+            # 'decayLengthHS1',
+            # 'decayLengthHS2',
             'decayLengthsHS',
 
-            'acceptance_true_scalars',
-            'acceptance_true_scalars_new',
+            # 'acceptance_true_scalars',
+            # 'acceptance_true_scalars_new',
 
-            'n_truthmatchedDVs_nosel',
-            'invMass_truthmatched_nosel',
+            # 'scalar1_decays_MC_charged_InvMass',
+            # 'scalar2_decays_MC_charged_InvMass',
+            # 'n_true_in_ID',
 
-            'distance_s1_truthmatchedDVs_nosel',
-            'distance_s2_truthmatchedDVs_nosel',
+            # 's1b1_vertex_x',
+            # 's1b1_vertex_y',
+            # 's1b1_vertex_z',
+            # 's1b2_vertex_x',
+            # 's1b2_vertex_y',
+            # 's1b2_vertex_z',
 
-            'n_matchedDVtracks_nosel',
-            'truthmatch_purity_nosel',
-            'fake_rate_nosel',
-            'rec_eff_nosel_s1',
-            'rec_eff_nosel_s2',
-            'rec_eff_nosel_total',
+            # 's2b1_vertex_x',
+            # 's2b1_vertex_y',
+            # 's2b1_vertex_z',
+            # 's2b2_vertex_x',
+            # 's2b2_vertex_y',
+            # 's2b2_vertex_z',
+
+            'scalar1_decays_MC',
+            'scalar2_decays_MC',
+
+            # 'scalar1_decays_MC_vertex_x',
+            # 'scalar1_decays_MC_vertex_y',
+            # 'scalar1_decays_MC_vertex_z',
+            # 'scalar2_decays_MC_vertex_x',
+            # 'scalar2_decays_MC_vertex_y',
+            # 'scalar2_decays_MC_vertex_z',
+
+            # 'n_truthmatchedDVs_position',
+
+            # 'distance_s1_truthmatchedDVs_position',
+            # 'distance_s2_truthmatchedDVs_position',
+
+            # 'truthmatch_purity_position',
+            # 'fake_rate_position',
+            # 'rec_eff_position_s1',
+            # 'rec_eff_position_s2',
+            # 'rec_eff_position_total',
+
+            # 'n_truthmatchedDVs_nosel',
+            # 'invMass_truthmatched_nosel',
+
+            # 'distance_s1_truthmatchedDVs_nosel',
+            # 'distance_s2_truthmatchedDVs_nosel',
+
+            # 'n_matchedDVtracks_nosel',
+            # 'truthmatch_purity_nosel',
+            # 'fake_rate_nosel',
+            # 'rec_eff_nosel_s1',
+            # 'rec_eff_nosel_s2',
+            # 'rec_eff_nosel_total',
 
             
             'n_truthmatchedDVs_seltracks',
@@ -610,17 +797,17 @@ class RDFanalysis():
             'rec_eff_seltracks_s2',
             'rec_eff_seltracks_total',
 
-            'n_truthmatchedDVs_merged',
-            'invMass_truthmatched_merged',
+            # 'n_truthmatchedDVs_merged',
+            # 'invMass_truthmatched_merged',
 
-            'distance_s1_truthmatchedDVs_merged',
-            'distance_s2_truthmatchedDVs_merged',
+            # 'distance_s1_truthmatchedDVs_merged',
+            # 'distance_s2_truthmatchedDVs_merged',
 
-            'n_matchedDVtracks_merged',
-            'truthmatch_purity_merged',
-            'fake_rate_merged',
-            'rec_eff_merged_s1',
-            'rec_eff_merged_s2',
-            'rec_eff_merged_total',
+            # 'n_matchedDVtracks_merged',
+            # 'truthmatch_purity_merged',
+            # 'fake_rate_merged',
+            # 'rec_eff_merged_s1',
+            # 'rec_eff_merged_s2',
+            # 'rec_eff_merged_total',
         ]
         return branchList
