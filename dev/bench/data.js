@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684998627416,
+  "lastUpdate": 1697612348651,
   "repoUrl": "https://github.com/mvoorde/FCCAnalyses_LLP",
   "entries": {
     "Benchmark": [
@@ -5144,6 +5144,70 @@ window.BENCHMARK_DATA = {
             "name": "prod | Events processed per second: examples/FCCee/vertex_lcfiplus/analysis_V0.py",
             "value": 2.2600938260005194,
             "unit": "Evt/s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "magdalena.vandevoorde@cern.ch",
+            "name": "Magdalena Vande Voorde"
+          },
+          "committer": {
+            "email": "magdalena.vandevoorde@cern.ch",
+            "name": "Magdalena Vande Voorde"
+          },
+          "distinct": true,
+          "id": "76400e8ddc552aa0154adabe97ec17615341b43d",
+          "message": "changed files for debugging",
+          "timestamp": "2023-10-18T08:45:36+02:00",
+          "tree_id": "106936bfbb6de056fe9f2e6a88eba4637be8fc1f",
+          "url": "https://github.com/mvoorde/FCCAnalyses_LLP/commit/76400e8ddc552aa0154adabe97ec17615341b43d"
+        },
+        "date": 1697612346016,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "prod | Time spent running the analysis: examples/FCCee/weaver/analysis_inference.py",
+            "value": 41.317843437194824,
+            "unit": "Seconds",
+            "range": 10,
+            "extra": "Analysis path: examples/FCCee/weaver/analysis_inference.py"
+          },
+          {
+            "name": "prod | Time spent running the analysis: case-studies/analysis_example/scripts/analysis_example.py",
+            "value": 12.126112461090088,
+            "unit": "Seconds",
+            "range": 10,
+            "extra": "Analysis path: case-studies/analysis_example/scripts/analysis_example.py"
+          },
+          {
+            "name": "prod | Time spent running the analysis: examples/FCCee/higgs/mH-recoil/mumu/analysis_stage1.py",
+            "value": 13.074267864227295,
+            "unit": "Seconds",
+            "range": 10,
+            "extra": "Analysis path: examples/FCCee/higgs/mH-recoil/mumu/analysis_stage1.py"
+          },
+          {
+            "name": "prod | Time spent running the analysis: examples/FCCee/flavour/Bc2TauNu/analysis_B2TauNu_truth.py",
+            "value": 18.252809524536133,
+            "unit": "Seconds",
+            "range": 10,
+            "extra": "Analysis path: examples/FCCee/flavour/Bc2TauNu/analysis_B2TauNu_truth.py"
+          },
+          {
+            "name": "prod | Time spent running the analysis: examples/FCCee/test/jet_constituents.py",
+            "value": 13.547340869903564,
+            "unit": "Seconds",
+            "range": 10,
+            "extra": "Analysis path: examples/FCCee/test/jet_constituents.py"
+          },
+          {
+            "name": "prod | Time spent running the analysis: examples/FCCee/vertex_lcfiplus/analysis_V0.py",
+            "value": 36.89187431335449,
+            "unit": "Seconds",
+            "range": 10,
+            "extra": "Analysis path: examples/FCCee/vertex_lcfiplus/analysis_V0.py"
           }
         ]
       }
