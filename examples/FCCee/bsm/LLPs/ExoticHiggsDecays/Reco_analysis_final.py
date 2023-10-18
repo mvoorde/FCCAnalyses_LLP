@@ -1,8 +1,9 @@
 #Input directory where the files produced at the stage1 level are
-inputDir  = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/Reco_output_stage1/"
+#inputDir  = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/Reco_output_stage1/"
+inputDir  = "/afs/cern.ch/user/u/uvandevo/work/myFCC-LLPgit/FCCAnalyses_LLP/examples/FCCee/bsm/LLPs/ExoticHiggsDecays/Reco_output_stage1_TEST/"
 
 #Output directory where the files produced at the final-selection level are
-outputDir  = "Reco_output_finalSel/"
+outputDir  = "Reco_output_finalSel_TEST/"
 
 
 # # #Integrated luminosity for scaling number of events (required only if setting doScale to true)
@@ -17,47 +18,50 @@ outputDir  = "Reco_output_finalSel/"
 #Mandatory: List of processes
 processList = {
 
+        'test':{}
         #privately-produced signals
-        'exoticHiggs_scalar_ms20GeV_sine-5':{},
-        'exoticHiggs_scalar_ms20GeV_sine-6':{},
-        'exoticHiggs_scalar_ms20GeV_sine-7':{},
-        'exoticHiggs_scalar_ms60GeV_sine-5':{},
-        'exoticHiggs_scalar_ms60GeV_sine-6':{},
-        'exoticHiggs_scalar_ms60GeV_sine-7':{},
+        #'exoticHiggs_scalar_ms20GeV_sine-5':{},
+        #'exoticHiggs_scalar_ms20GeV_sine-6':{},
+        #'exoticHiggs_scalar_ms20GeV_sine-7':{},
+        #'exoticHiggs_scalar_ms60GeV_sine-5':{},
+        #'exoticHiggs_scalar_ms60GeV_sine-6':{},
+        #'exoticHiggs_scalar_ms60GeV_sine-7':{},
 
         #centrally produced backgrounds
-        'p8_ee_ZZ_ecm240':{},
-        'p8_ee_WW_ecm240':{},
-        'p8_ee_ZH_ecm240':{},
+        # 'p8_ee_ZZ_ecm240':{},
+        # 'p8_ee_WW_ecm240':{},
+        # 'p8_ee_ZH_ecm240':{},
 }
 
 ###Dictionary for prettier names of processes (optional)
 processLabels = {
-    #signals
-    'exoticHiggs_scalar_ms20GeV_sine-5': "$m_S$ = 20 GeV, sin $\theta = 1 * 10^{-5}$",
-    'exoticHiggs_scalar_ms20GeV_sine-6': "$m_S$ = 20 GeV, sin $\theta = 1 * 10^{-6}$",
-    'exoticHiggs_scalar_ms20GeV_sine-7': "$m_S$ = 20 GeV, sin $\theta = 1 * 10^{-7}$",
-    'exoticHiggs_scalar_ms60GeV_sine-5': "$m_S$ = 60 GeV, sin $\theta = 1 * 10^{-5}$",
-    'exoticHiggs_scalar_ms60GeV_sine-6': "$m_S$ = 60 GeV, sin $\theta = 1 * 10^{-6}$",
-    'exoticHiggs_scalar_ms60GeV_sine-7': "$m_S$ = 60 GeV, sin $\theta = 1 * 10^{-7}$",
+    # #signals
+    # 'exoticHiggs_scalar_ms20GeV_sine-5': "$m_S$ = 20 GeV, sin $\theta = 1 * 10^{-5}$",
+    # 'exoticHiggs_scalar_ms20GeV_sine-6': "$m_S$ = 20 GeV, sin $\theta = 1 * 10^{-6}$",
+    # 'exoticHiggs_scalar_ms20GeV_sine-7': "$m_S$ = 20 GeV, sin $\theta = 1 * 10^{-7}$",
+    # 'exoticHiggs_scalar_ms60GeV_sine-5': "$m_S$ = 60 GeV, sin $\theta = 1 * 10^{-5}$",
+    # 'exoticHiggs_scalar_ms60GeV_sine-6': "$m_S$ = 60 GeV, sin $\theta = 1 * 10^{-6}$",
+    # 'exoticHiggs_scalar_ms60GeV_sine-7': "$m_S$ = 60 GeV, sin $\theta = 1 * 10^{-7}$",
 
-    #backgrounds
-    'p8_ee_WW_ecm240': "e^{-}e^{+} $\rightarrow$ WW",
-    'p8_ee_ZZ_ecm240': "e^{-}e^{+} $\rightarrow$ ZZ",
-    'p8_ee_ZH_ecm240': "e^{-}e^{+} $\rightarrow$ ZH",
+    # #backgrounds
+    # 'p8_ee_WW_ecm240': "e^{-}e^{+} $\rightarrow$ WW",
+    # 'p8_ee_ZZ_ecm240': "e^{-}e^{+} $\rightarrow$ ZZ",
+    # 'p8_ee_ZH_ecm240': "e^{-}e^{+} $\rightarrow$ ZH",
 }
 
 #Link to the dictonary that contains all the cross section information etc...
 procDict = "FCCee_procDict_spring2021_IDEA.json"
 
 #Add MySample_p8_ee_ZH_ecm240 as it is not an offical process
+#OBS NUMBEROFEVENTS AND SUMOFWEIGHTS HAS BEEN MODIFIED FOR DEBUGGING, REMEMBER TO CHANGE BACK
 procDictAdd={
-    'exoticHiggs_scalar_ms20GeV_sine-5': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 8.858e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
-    'exoticHiggs_scalar_ms20GeV_sine-6': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 8.858e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
-    'exoticHiggs_scalar_ms20GeV_sine-7': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 8.858e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
-    'exoticHiggs_scalar_ms60GeV_sine-5': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 2.618e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
-    'exoticHiggs_scalar_ms60GeV_sine-6': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 2.618e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
-    'exoticHiggs_scalar_ms60GeV_sine-7': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 2.618e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    'test': {"numberOfEvents": 100, "sumOfWeights": 100, "crossSection": 8.858e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    #'exoticHiggs_scalar_ms20GeV_sine-5': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 8.858e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    #'exoticHiggs_scalar_ms20GeV_sine-6': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 8.858e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    # 'exoticHiggs_scalar_ms20GeV_sine-7': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 8.858e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    # 'exoticHiggs_scalar_ms60GeV_sine-5': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 2.618e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    # 'exoticHiggs_scalar_ms60GeV_sine-6': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 2.618e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    # 'exoticHiggs_scalar_ms60GeV_sine-7': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 2.618e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
 }
 
 #Number of CPUs to use
@@ -72,10 +76,10 @@ cutList = {
     "selNone": "n_tracks > -1",
 
     # For event selection
-    "preSel": "((n_RecoElectrons>1) && (RecoElectron_charge.at(0) != RecoElectron_charge.at(1))) || ((n_RecoMuons>1) && (RecoMuon_charge.at(0) != RecoMuon_charge.at(1)))",
-    "selZ": "(Reco_ee_invMass > 70 && Reco_ee_invMass < 110) || (Reco_mumu_invMass > 70 && Reco_mumu_invMass < 110)",
-    "selZ+nDVs_seltracks": "((Reco_ee_invMass > 70 && Reco_ee_invMass < 110) || (Reco_mumu_invMass > 70 && Reco_mumu_invMass < 110)) && filter_n_DVs_seltracks > 1",
-    "selZ+nDVs_merge": "((Reco_ee_invMass > 70 && Reco_ee_invMass < 110) || (Reco_mumu_invMass > 70 && Reco_mumu_invMass < 110)) && filter_n_DVs_merge > 1",
+    # "preSel": "((n_RecoElectrons>1) && (RecoElectron_charge.at(0) != RecoElectron_charge.at(1))) || ((n_RecoMuons>1) && (RecoMuon_charge.at(0) != RecoMuon_charge.at(1)))",
+    # "selZ": "(Reco_ee_invMass > 70 && Reco_ee_invMass < 110) || (Reco_mumu_invMass > 70 && Reco_mumu_invMass < 110)",
+    # "selZ+nDVs_seltracks": "((Reco_ee_invMass > 70 && Reco_ee_invMass < 110) || (Reco_mumu_invMass > 70 && Reco_mumu_invMass < 110)) && filter_n_DVs_seltracks > 1",
+    # "selZ+nDVs_merge": "((Reco_ee_invMass > 70 && Reco_ee_invMass < 110) || (Reco_mumu_invMass > 70 && Reco_mumu_invMass < 110)) && filter_n_DVs_merge > 1",
 }
 
 ###Dictionary for prettier names of cuts (optional)
@@ -84,10 +88,10 @@ cutLabels = {
     "selNone": "Before selection",
 
     # For event selection
-    "preSel": "At least 2 oppositely charged leptons",
-    "selZ": "70 < $m_{ll}$ < 110 GeV",
-    "selZ+nDVs_seltracks": "n DVs $\geq$ 2",
-    "selZ+nDVs_merge": "n DVs $\geq$ 2 (merged)",
+    # "preSel": "At least 2 oppositely charged leptons",
+    # "selZ": "70 < $m_{ll}$ < 110 GeV",
+    # "selZ+nDVs_seltracks": "n DVs $\geq$ 2",
+    # "selZ+nDVs_merge": "n DVs $\geq$ 2 (merged)",
 }
 
 ###Dictionary for the ouput variable/hitograms. The key is the name of the variable in the output files. "name" is the name of the variable in the input file, "title" is the x-axis label of the histogram, "bin" the number of bins of the histogram, "xmin" the minimum x-axis value and "xmax" the maximum x-axis value.

@@ -6,12 +6,12 @@ testFile = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/output
 processList = {
 
         #privately-produced signals
-        'exoticHiggs_scalar_ms20GeV_sine-5':{},
-        'exoticHiggs_scalar_ms20GeV_sine-6':{},
-        'exoticHiggs_scalar_ms20GeV_sine-7':{},
-        'exoticHiggs_scalar_ms60GeV_sine-5':{},
-        'exoticHiggs_scalar_ms60GeV_sine-6':{},
-        'exoticHiggs_scalar_ms60GeV_sine-7':{},
+        #'exoticHiggs_scalar_ms20GeV_sine-5':{},
+        #'exoticHiggs_scalar_ms20GeV_sine-6':{},
+        # 'exoticHiggs_scalar_ms20GeV_sine-7':{},
+        # 'exoticHiggs_scalar_ms60GeV_sine-5':{},
+        # 'exoticHiggs_scalar_ms60GeV_sine-6':{},
+        # 'exoticHiggs_scalar_ms60GeV_sine-7':{},
 
         # #centrally produced backgrounds
         # 'p8_ee_ZH_ecm240':{'fraction':0.01},
@@ -34,7 +34,7 @@ inputDir = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/output
 #Optional: output directory, default is local dir
 #outputDir = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/Reco_output_stage1/"
 #outputDirEos = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/Reco_output_stage1/"
-outputDir = "Reco_output_stage1/"
+outputDir = "Reco_output_stage1_TEST/"
 
 #Optional: ncpus, default is 4
 nCPUS       = 8
