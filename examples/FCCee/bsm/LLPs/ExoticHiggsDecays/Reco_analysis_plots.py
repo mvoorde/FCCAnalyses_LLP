@@ -1,7 +1,7 @@
 import ROOT
 
 # global parameters
-intLumi        = 5.0e+06 #in pb-1
+intLumi        = 7.2e+06 #in pb-1
 
 ###If scaleSig=0 or scaleBack=0, we don't apply any additional scaling, on top of the normalization to cross section and integrated luminosity, as defined in finalSel.py
 ###If scaleSig or scaleBack is not defined, plots will be normalized to 1
@@ -11,13 +11,13 @@ ana_tex        = 'e^{+}e^{-} #rightarrow Z h, Z #rightarrow l^{+}l^{-}, h #right
 delphesVersion = '3.4.2'
 energy         = 240
 collider       = 'FCC-ee'
-inputDir       = 'Reco_output_finalSelPlots/'
+inputDir       = 'Reco_output_finalSel_231107/'
 #formats        = ['png','pdf']
 formats        = ['pdf']
 # yaxis          = ['lin','log']
 yaxis          = ['log']
 stacksig       = ['nostack']
-outdir         = 'Reco_plots/'
+outdir         = 'Reco_plots_231107/'
 splitLeg       = True
 
 variables = [

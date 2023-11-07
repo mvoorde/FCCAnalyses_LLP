@@ -1,16 +1,16 @@
 #Input directory where the files produced at the stage1 level are
 #inputDir  = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/Reco_output_stage1/"
-inputDir  = "/afs/cern.ch/user/u/uvandevo/work/myFCC-LLPgit/FCCAnalyses_LLP/examples/FCCee/bsm/LLPs/ExoticHiggsDecays/Reco_output_stage1_TEST/"
+inputDir  = "/eos/experiment/fcc/ee/analyses_storage/BSM/LLPs/ExoticHiggsDecays/Reco_output_stage1/"
 
 #Output directory where the files produced at the final-selection level are
-outputDir  = "Reco_output_finalSel_TEST/"
+outputDir  = "Reco_output_finalSel_231107/"
 
 
 # # #Integrated luminosity for scaling number of events (required only if setting doScale to true)
-# intLumi = 5e6 #pb^-1
+intLumi = 7.2e6 #pb^-1
 
 # # #Scale event yields by intLumi and cross section (optional)
-# doScale = True
+doScale = True
 
 # # #Save event yields in a table (optional)
 # saveTabular = True
@@ -18,14 +18,14 @@ outputDir  = "Reco_output_finalSel_TEST/"
 #Mandatory: List of processes
 processList = {
 
-        'test':{}
+        #'test':{}
         #privately-produced signals
-        #'exoticHiggs_scalar_ms20GeV_sine-5':{},
-        #'exoticHiggs_scalar_ms20GeV_sine-6':{},
-        #'exoticHiggs_scalar_ms20GeV_sine-7':{},
-        #'exoticHiggs_scalar_ms60GeV_sine-5':{},
-        #'exoticHiggs_scalar_ms60GeV_sine-6':{},
-        #'exoticHiggs_scalar_ms60GeV_sine-7':{},
+        'exoticHiggs_scalar_ms20GeV_sine-5':{},
+        'exoticHiggs_scalar_ms20GeV_sine-6':{},
+        'exoticHiggs_scalar_ms20GeV_sine-7':{},
+        'exoticHiggs_scalar_ms60GeV_sine-5':{},
+        'exoticHiggs_scalar_ms60GeV_sine-6':{},
+        'exoticHiggs_scalar_ms60GeV_sine-7':{},
 
         #centrally produced backgrounds
         # 'p8_ee_ZZ_ecm240':{},
@@ -35,13 +35,13 @@ processList = {
 
 ###Dictionary for prettier names of processes (optional)
 processLabels = {
-    # #signals
-    # 'exoticHiggs_scalar_ms20GeV_sine-5': "$m_S$ = 20 GeV, sin $\theta = 1 * 10^{-5}$",
-    # 'exoticHiggs_scalar_ms20GeV_sine-6': "$m_S$ = 20 GeV, sin $\theta = 1 * 10^{-6}$",
-    # 'exoticHiggs_scalar_ms20GeV_sine-7': "$m_S$ = 20 GeV, sin $\theta = 1 * 10^{-7}$",
-    # 'exoticHiggs_scalar_ms60GeV_sine-5': "$m_S$ = 60 GeV, sin $\theta = 1 * 10^{-5}$",
-    # 'exoticHiggs_scalar_ms60GeV_sine-6': "$m_S$ = 60 GeV, sin $\theta = 1 * 10^{-6}$",
-    # 'exoticHiggs_scalar_ms60GeV_sine-7': "$m_S$ = 60 GeV, sin $\theta = 1 * 10^{-7}$",
+    #signals
+    'exoticHiggs_scalar_ms20GeV_sine-5': "$m_S$ = 20 GeV, sin $\theta = 1 * 10^{-5}$",
+    'exoticHiggs_scalar_ms20GeV_sine-6': "$m_S$ = 20 GeV, sin $\theta = 1 * 10^{-6}$",
+    'exoticHiggs_scalar_ms20GeV_sine-7': "$m_S$ = 20 GeV, sin $\theta = 1 * 10^{-7}$",
+    'exoticHiggs_scalar_ms60GeV_sine-5': "$m_S$ = 60 GeV, sin $\theta = 1 * 10^{-5}$",
+    'exoticHiggs_scalar_ms60GeV_sine-6': "$m_S$ = 60 GeV, sin $\theta = 1 * 10^{-6}$",
+    'exoticHiggs_scalar_ms60GeV_sine-7': "$m_S$ = 60 GeV, sin $\theta = 1 * 10^{-7}$",
 
     # #backgrounds
     # 'p8_ee_WW_ecm240': "e^{-}e^{+} $\rightarrow$ WW",
@@ -55,13 +55,12 @@ procDict = "FCCee_procDict_spring2021_IDEA.json"
 #Add MySample_p8_ee_ZH_ecm240 as it is not an offical process
 #OBS NUMBEROFEVENTS AND SUMOFWEIGHTS HAS BEEN MODIFIED FOR DEBUGGING, REMEMBER TO CHANGE BACK
 procDictAdd={
-    'test': {"numberOfEvents": 100, "sumOfWeights": 100, "crossSection": 8.858e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
-    #'exoticHiggs_scalar_ms20GeV_sine-5': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 8.858e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
-    #'exoticHiggs_scalar_ms20GeV_sine-6': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 8.858e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
-    # 'exoticHiggs_scalar_ms20GeV_sine-7': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 8.858e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
-    # 'exoticHiggs_scalar_ms60GeV_sine-5': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 2.618e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
-    # 'exoticHiggs_scalar_ms60GeV_sine-6': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 2.618e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
-    # 'exoticHiggs_scalar_ms60GeV_sine-7': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 2.618e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    'exoticHiggs_scalar_ms20GeV_sine-5': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 8.858e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    'exoticHiggs_scalar_ms20GeV_sine-6': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 8.858e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    'exoticHiggs_scalar_ms20GeV_sine-7': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 8.858e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    'exoticHiggs_scalar_ms60GeV_sine-5': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 2.618e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    'exoticHiggs_scalar_ms60GeV_sine-6': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 2.618e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
+    'exoticHiggs_scalar_ms60GeV_sine-7': {"numberOfEvents": 10000, "sumOfWeights": 10000, "crossSection": 2.618e-6, "kfactor": 1.0, "matchingEfficiency": 1.0},
 }
 
 #Number of CPUs to use

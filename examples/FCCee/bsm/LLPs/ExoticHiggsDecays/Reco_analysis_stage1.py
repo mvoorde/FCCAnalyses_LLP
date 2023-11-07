@@ -6,12 +6,12 @@ testFile = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/output
 processList = {
 
         #privately-produced signals
-        #'exoticHiggs_scalar_ms20GeV_sine-5':{},
-        #'exoticHiggs_scalar_ms20GeV_sine-6':{},
-        # 'exoticHiggs_scalar_ms20GeV_sine-7':{},
-        # 'exoticHiggs_scalar_ms60GeV_sine-5':{},
-        # 'exoticHiggs_scalar_ms60GeV_sine-6':{},
-        # 'exoticHiggs_scalar_ms60GeV_sine-7':{},
+        'exoticHiggs_scalar_ms20GeV_sine-5':{},
+        'exoticHiggs_scalar_ms20GeV_sine-6':{},
+        'exoticHiggs_scalar_ms20GeV_sine-7':{},
+        'exoticHiggs_scalar_ms60GeV_sine-5':{},
+        'exoticHiggs_scalar_ms60GeV_sine-6':{},
+        'exoticHiggs_scalar_ms60GeV_sine-7':{},
 
         # #centrally produced backgrounds
         # 'p8_ee_ZH_ecm240':{'fraction':0.01},
@@ -28,23 +28,23 @@ processList = {
 #Input directory
 #Comment out when running over centrally produced events
 #Mandatory when running over privately produced events
-inputDir = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/output_MadgraphPythiaDelphes/"
+inputDir = "/eos/experiment/fcc/ee/analyses_storage/BSM/LLPs/ExoticHiggsDecays/MC_generation/"
 
 
 #Optional: output directory, default is local dir
 #outputDir = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/Reco_output_stage1/"
 #outputDirEos = "/eos/experiment/fcc/ee/analyses/case-studies/bsm/LLPs/H_SS_4b/Reco_output_stage1/"
-outputDir = "Reco_output_stage1_TEST/"
+outputDir = "/eos/experiment/fcc/ee/analyses_storage/BSM/LLPs/ExoticHiggsDecays/Reco_output_stage1/"
 
 #Optional: ncpus, default is 4
 nCPUS       = 8
 
 #Optional running on HTCondor, default is False
-runBatch    = False
-#runBatch    = True
+#runBatch    = False
+runBatch    = True
 
 #Optional batch queue name when running on HTCondor, default is workday
-#batchQueue = "longlunch"
+batchQueue = "workday"
 
 #Optional computing account when running on HTCondor, default is group_u_FCC.local_gen
 #compGroup = "group_u_FCC.local_gen"
